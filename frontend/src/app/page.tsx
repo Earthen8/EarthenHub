@@ -2,76 +2,100 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="relative min-h-screen overflow-hidden selection:bg-primary/30">
-      {/* Background Blobs */}
-      <div className="absolute top-[-10%] left-[-10%] h-[500px] w-[500px] rounded-full bg-primary/10 blur-[120px] animate-pulse" />
-      <div className="absolute bottom-[-10%] right-[-10%] h-[500px] w-[500px] rounded-full bg-accent/5 blur-[120px] animate-pulse" />
+    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+        <Image
+          className="dark:invert"
+          src="/next.svg"
+          alt="Next.js logo"
+          width={180}
+          height={38}
+          priority
+        />
+        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
+          <li className="mb-2">
+            Get started by editing{" "}
+            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
+              src/app/page.tsx
+            </code>
+            .
+          </li>
+          <li>Save changes and see them instantly.</li>
+        </ol>
 
-      <main className="relative flex flex-col items-center justify-center min-h-screen px-6">
-        <nav className="absolute top-0 w-full flex items-center justify-between py-8 px-12 max-w-7xl">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent" />
-            <span className="text-xl font-bold tracking-tight">EarthenHub</span>
-          </div>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
-            <a href="#" className="hover:text-foreground transition-colors">Platform</a>
-            <a href="#" className="hover:text-foreground transition-colors">Solutions</a>
-            <a href="#" className="hover:text-foreground transition-colors">Company</a>
-            <button className="px-5 py-2 rounded-full bg-foreground text-background hover:opacity-90 transition-opacity">
-              Get Started
-            </button>
-          </div>
-        </nav>
-
-        <section className="flex flex-col items-center text-center max-w-4xl space-y-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass text-xs font-semibold text-primary mb-4 border-primary/20">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-            </span>
-            NEXT.JS 15 READY
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight gradient-text">
-            Architecting the Future <br /> of Modern Web
-          </h1>
-          
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            EarthenHub is a premium template designed for high-performance applications. 
-            Experience the synergy of speed, aesthetics, and developer experience.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 pt-4">
-            <button className="px-8 py-4 rounded-xl bg-primary text-white font-semibold hover:scale-105 transition-transform shadow-[0_0_20px_rgba(59,130,246,0.3)]">
-              Start Building
-            </button>
-            <button className="px-8 py-4 rounded-xl glass font-semibold hover:bg-white/5 transition-colors border-white/10">
-              View Documentation
-            </button>
-          </div>
-        </section>
-
-        {/* Feature Cards Preview */}
-        <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl w-full">
-          {[
-            { title: "Ultra Performance", desc: "Optimized for Core Web Vitals from day one.", icon: "⚡" },
-            { title: "Modern Stack", desc: "Built with Next.js 15, Tailwind, and TypeScript.", icon: "🎨" },
-            { title: "Global Scale", desc: "Deploy to the edge with seamless Vercel integration.", icon: "🌍" }
-          ].map((feature, i) => (
-            <div key={i} className="p-8 rounded-2xl glass hover:border-primary/50 transition-colors group">
-              <div className="text-3xl mb-4 group-hover:scale-110 transition-transform inline-block">
-                {feature.icon}
-              </div>
-              <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
-              <p className="text-sm text-muted-foreground">{feature.desc}</p>
-            </div>
-          ))}
+        <div className="flex gap-4 items-center flex-col sm:flex-row">
+          <a
+            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
+            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              className="dark:invert"
+              src="/vercel.svg"
+              alt="Vercel logomark"
+              width={20}
+              height={20}
+            />
+            Deploy now
+          </a>
+          <a
+            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
+            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Read our docs
+          </a>
         </div>
-
-        <footer className="mt-32 pb-12 text-sm text-muted-foreground">
-          © {new Date().getFullYear()} EarthenHub. All rights reserved.
-        </footer>
       </main>
+      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/file.svg"
+            alt="File icon"
+            width={16}
+            height={16}
+          />
+          Learn
+        </a>
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/window.svg"
+            alt="Window icon"
+            width={16}
+            height={16}
+          />
+          Examples
+        </a>
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/globe.svg"
+            alt="Globe icon"
+            width={16}
+            height={16}
+          />
+          Go to nextjs.org →
+        </a>
+      </footer>
     </div>
   );
 }
