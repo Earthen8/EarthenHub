@@ -3,6 +3,7 @@ export const COLORS = {
   secondary: "#1E1E1F",
   tertiary: "#D6D6D6",
   neutral: "#121212",
+  buttonInverted: "#E1E1E1",
 }
 
 export const TYPOGRAPHY = {

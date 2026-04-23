@@ -1,15 +1,20 @@
 @import "tailwindcss";
 
-:root {
+@theme {
+  /* Colors */
   --color-primary: #FFDB70;
   --color-secondary: #1E1E1F;
   --color-tertiary: #D6D6D6;
   --color-neutral: #121212;
-  --font-main: "Manrope", sans-serif;
-}
 
-body {
-  background-color: var(--color-neutral);
-  color: var(--color-tertiary);
-  font-family: var(--font-main);
+  /* Typography */
+  --font-manrope: "Manrope", sans-serif;
+
+  /* Custom Font Scales */
+  --text-headline: 2rem;
+  --text-body: 1rem;
+  --text-label: 0.875rem;
+  
+  /* UI Components */
+  --color-button-inverted: #E1E1E1;
 }
