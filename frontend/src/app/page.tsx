@@ -7,16 +7,16 @@ import { UserProfile, ServiceItem, ExperienceItem } from "@/types";
 
 export default async function Page() {
   const profileData: UserProfile = {
-    name: "Alex Rivers",
+    name: "Earthen Krisdian Setya",
     title: "Creative Technologist",
-    email: "alex.rivers@dev.io",
-    phone: "+1 (213) 555-0123",
-    location: "Los Angeles, CA",
-    birthday: "October 24, 1992",
+    email: "earthen505@gmail.com",
+    phone: "+62 878 1722 7300",
+    location: "South Tangerang, ID",
+    birthday: "I born in 2006",
     avatarUrl: "/avatar-placeholder.jpg",
     aboutText: [
-      "I'm a Creative Technologist based in Los Angeles, specializing in crafting immersive digital experiences that bridge the gap between aesthetic design and technical excellence. With over 8 years of experience, I turn complex problems into elegant, user-centric solutions.",
-      "My job is to build your website so that it is functional and user-friendly but at the same time attractive. Moreover, I add personal touch to your product and make sure that is eye-catching and easy to use. My aim is to bring across your message and identity in the most creative way."
+      "As a versatile digital collaborator and creative strategist, I leverage advanced AI capabilities to transform complex ideas into high-quality text, imagery, and multimedia content. My expertise lies in bridging the gap between technical precision and human-centric storytelling, ensuring every project is both data-driven and engaging.",
+      "By integrating cutting-edge tools like Gemini 3 Flash and Veo, I deliver tailored solutions that optimize workflow efficiency and drive digital innovation. I am dedicated to providing insightful, SEO-optimized results that empower users to achieve their professional goals in an evolving technological landscape."
     ]
   };
 
