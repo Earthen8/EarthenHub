@@ -1,5 +1,6 @@
 import { Navigation } from '@/components/navigation'
 import { HeroSection } from '@/components/hero-section'
+import { AboutSection } from '@/components/about-section'
 import { BentoGrid } from '@/components/bento-grid'
 import { TimelineSection } from '@/components/timeline-section'
 import { GearSection } from '@/components/gear-section'
@@ -11,6 +12,7 @@ export default function Home() {
     <main className="relative min-h-screen">
       <Navigation />
       <HeroSection />
+      <AboutSection />
       <BentoGrid />
       <TimelineSection />
       <GearSection />

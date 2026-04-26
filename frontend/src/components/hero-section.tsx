@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ArrowDown, Code2, Camera, Palette } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -20,6 +20,8 @@ const roles = [
 export function HeroSection() {
   const [currentTagline, setCurrentTagline] = useState(0)
   const [isVisible, setIsVisible] = useState(false)
+  const [shouldStickPortrait, setShouldStickPortrait] = useState(true)
+  const portraitRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setIsVisible(true)
@@ -28,6 +30,20 @@ export function HeroSection() {
     }, 3000)
     return () => clearInterval(interval)
   }, [])
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const aboutSection = document.getElementById('about')
+      if (aboutSection && portraitRef.current) {
+        const aboutRect = aboutSection.getBoundingClientRect()
+        setShouldStickPortrait(aboutRect.top > window.innerHeight / 2)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
 
   const scrollToWorlds = () => {
     const element = document.getElementById('worlds')
@@ -132,9 +148,11 @@ export function HeroSection() {
 
           {/* Right Side - Portrait */}
           <div
+            ref={portraitRef}
             className={cn(
-              'relative transition-all duration-1000 delay-300',
-              isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'
+              'transition-all duration-1000 delay-300',
+              isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10',
+              shouldStickPortrait ? 'sticky top-20' : 'relative'
             )}
           >
             <div className="relative aspect-[4/5] max-w-md mx-auto">
