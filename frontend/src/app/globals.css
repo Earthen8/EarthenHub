@@ -178,3 +178,43 @@ html {
 .animate-glow {
   animation: glow 2s ease-in-out infinite;
 }
+
+/* Cursor */
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  border: 1.5px solid oklch(0.75 0.15 75 / 0.6);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  opacity: 0;
+  will-change: transform, border-radius, opacity;
+  transition: border-color 0.3s, opacity 0.2s;
+  mix-blend-mode: difference;
+  background: oklch(0.75 0.15 75 / 0.06);
+}
+
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  background: oklch(0.75 0.15 75);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10001;
+  opacity: 0;
+  will-change: transform, opacity;
+  transition: opacity 0.2s;
+}
+
+@media (pointer: coarse) {
+  .cursor-ring,
+  .cursor-dot {
+    display: none !important;
+  }
+}
