@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { ArrowDown, Code2, Camera, Palette } from 'lucide-react'
+import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
 const taglines = [
@@ -156,38 +157,44 @@ export function HeroSection() {
             )}
           >
             <div className="relative aspect-[4/5] max-w-md mx-auto">
-              {/* Decorative Elements */}
+              {/* Background Glow */}
               <div className="absolute -inset-4 bg-gradient-to-br from-accent/20 via-transparent to-accent/10 rounded-3xl blur-2xl" />
-              <div className="absolute top-4 right-4 w-20 h-20 border border-accent/30 rounded-full" />
-              <div className="absolute bottom-8 left-4 w-12 h-12 bg-accent/20 rounded-full animate-float" />
               
               {/* Portrait Container */}
-              <div className="relative h-full glass rounded-3xl overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-secondary/50 via-transparent to-accent/10" />
+              <div className="relative h-full glass rounded-3xl overflow-hidden group">
+                {/* Image */}
+                <Image
+                  src="/earthen-mask.png"
+                  alt="Earthen Krisdian Setya"
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  priority
+                />
+
+                {/* Grainy Overlay */}
+                <div 
+                  className="absolute inset-0 pointer-events-none opacity-[0.12] mix-blend-overlay" 
+                  style={{ 
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")` 
+                  }} 
+                />
                 
-                {/* Portrait Placeholder with Professional Look */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center space-y-4">
-                    <div className="w-32 h-32 mx-auto rounded-full bg-secondary/50 flex items-center justify-center">
-                      <span className="font-serif text-5xl font-bold text-accent">E</span>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">Professional Portrait</p>
-                      <p className="text-xs text-muted-foreground/60">Coming Soon</p>
-                    </div>
-                  </div>
-                </div>
+                <div className="absolute inset-0 bg-gradient-to-br from-secondary/40 via-transparent to-accent/10 pointer-events-none" />
 
                 {/* Corner Accents */}
-                <div className="absolute top-0 left-0 w-16 h-16">
+                <div className="absolute top-0 left-0 w-16 h-16 pointer-events-none">
                   <div className="absolute top-4 left-4 w-8 h-[1px] bg-accent/50" />
                   <div className="absolute top-4 left-4 w-[1px] h-8 bg-accent/50" />
                 </div>
-                <div className="absolute bottom-0 right-0 w-16 h-16">
+                <div className="absolute bottom-0 right-0 w-16 h-16 pointer-events-none">
                   <div className="absolute bottom-4 right-4 w-8 h-[1px] bg-accent/50" />
                   <div className="absolute bottom-4 right-4 w-[1px] h-8 bg-accent/50" />
                 </div>
               </div>
+
+              {/* Decorative Elements (Above Image & Glass) */}
+              <div className="absolute top-4 right-4 w-20 h-20 border border-accent/30 rounded-full pointer-events-none" />
+              <div className="absolute bottom-8 left-4 w-12 h-12 bg-accent/20 rounded-full animate-float pointer-events-none" />
             </div>
           </div>
         </div>
