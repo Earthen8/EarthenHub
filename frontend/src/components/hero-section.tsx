@@ -167,6 +167,7 @@ export function HeroSection() {
                   src="/earthen-mask.png"
                   alt="Earthen Krisdian Setya"
                   fill
+                  sizes="(max-width: 768px) 100vw, 448px"
                   className="object-cover transition-transform duration-700 group-hover:scale-105 pointer-events-none select-none"
                   priority
                   draggable={false}
