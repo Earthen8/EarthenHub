@@ -1,89 +1,101 @@
-import { Sidebar } from "@/components/layout/Sidebar";
-import { TopNav } from "@/components/layout/TopNav";
-import { SectionTitle } from "@/components/ui/SectionTitle";
-import { ServiceCard } from "@/components/ui/ServiceCard";
-import { ExperienceCard } from "@/components/ui/ExperienceCard";
-import { UserProfile, ServiceItem, ExperienceItem } from "@/types";
+import Image from "next/image";
 
-export default async function Page() {
-  const profileData: UserProfile = {
-    name: "Earthen Krisdian Setya",
-    title: "Creative Technologist",
-    email: "earthen505@gmail.com",
-    phone: "+62 878 1722 7300",
-    location: "South Tangerang, ID",
-    birthday: "I born in 2006",
-    avatarUrl: "/avatar-placeholder.jpg",
-    aboutText: [
-      "As a versatile digital collaborator and creative strategist, I leverage advanced AI capabilities to transform complex ideas into high-quality text, imagery, and multimedia content. My expertise lies in bridging the gap between technical precision and human-centric storytelling, ensuring every project is both data-driven and engaging.",
-      "By integrating cutting-edge tools like Gemini 3 Flash and Veo, I deliver tailored solutions that optimize workflow efficiency and drive digital innovation. I am dedicated to providing insightful, SEO-optimized results that empower users to achieve their professional goals in an evolving technological landscape."
-    ]
-  };
-
-  const services: ServiceItem[] = [
-    {
-      id: 1,
-      title: "Web Design",
-      description: "The most modern and high-quality design made at a professional level.",
-      iconSvg: <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-    },
-    {
-      id: 2,
-      title: "Web Development",
-      description: "High-quality development of sites at the professional level.",
-      iconSvg: <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-    }
-  ];
-
-  const experiences: ExperienceItem[] = [
-    {
-      id: 1,
-      role: "Senior Creative Technologist",
-      company: "Future Studios",
-      location: "Los Angeles, CA",
-      period: "2021 - Present",
-      description: "Lead development of immersive web applications using React and Three.js. Architected scalable frontend systems for Fortune 500 clients and mentored junior design-engineering staff."
-    }
-  ];
-
+export default function Home() {
   return (
-    <main className="min-h-screen bg-[#121212] p-8 font-manrope text-[#D6D6D6]">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-8 relative">
-        
-        <Sidebar profile={profileData} />
+    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+        <Image
+          className="dark:invert"
+          src="/next.svg"
+          alt="Next.js logo"
+          width={180}
+          height={38}
+          priority
+        />
+        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
+          <li className="mb-2">
+            Get started by editing{" "}
+            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
+              src/app/page.tsx
+            </code>
+            .
+          </li>
+          <li>Save changes and see them instantly.</li>
+        </ol>
 
-        <div className="bg-[#1E1E1F] rounded-3xl p-10 border border-neutral-800 relative">
-          <TopNav />
-
-          <section className="mt-12 mb-10">
-            <SectionTitle title="About Me" />
-            <div className="flex flex-col gap-4 text-sm leading-relaxed">
-              {profileData.aboutText.map((text, idx) => (
-                <p key={idx}>{text}</p>
-              ))}
-            </div>
-          </section>
-
-          <section className="mb-10">
-            <h3 className="text-2xl font-bold text-white mb-6">What I'm Doing</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {services.map(service => (
-                <ServiceCard key={service.id} data={service} />
-              ))}
-            </div>
-          </section>
-
-          <section>
-            <h3 className="text-2xl font-bold text-white mb-6">Work Experience</h3>
-            <div className="flex flex-col gap-6">
-              {experiences.map(exp => (
-                <ExperienceCard key={exp.id} data={exp} />
-              ))}
-            </div>
-          </section>
-
+        <div className="flex gap-4 items-center flex-col sm:flex-row">
+          <a
+            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
+            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              className="dark:invert"
+              src="/vercel.svg"
+              alt="Vercel logomark"
+              width={20}
+              height={20}
+            />
+            Deploy now
+          </a>
+          <a
+            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
+            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Read our docs
+          </a>
         </div>
-      </div>
-    </main>
+      </main>
+      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/file.svg"
+            alt="File icon"
+            width={16}
+            height={16}
+          />
+          Learn
+        </a>
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/window.svg"
+            alt="Window icon"
+            width={16}
+            height={16}
+          />
+          Examples
+        </a>
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Image
+            aria-hidden
+            src="/globe.svg"
+            alt="Globe icon"
+            width={16}
+            height={16}
+          />
+          Go to nextjs.org →
+        </a>
+      </footer>
+    </div>
   );
 }

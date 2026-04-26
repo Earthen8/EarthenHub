@@ -1,20 +1,21 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-  /* Colors */
-  --color-primary: #FFDB70;
-  --color-secondary: #1E1E1F;
-  --color-tertiary: #D6D6D6;
-  --color-neutral: #121212;
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
 
-  /* Typography */
-  --font-manrope: "Manrope", sans-serif;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
 
-  /* Custom Font Scales */
-  --text-headline: 2rem;
-  --text-body: 1rem;
-  --text-label: 0.875rem;
-  
-  /* UI Components */
-  --color-button-inverted: #E1E1E1;
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
 }
