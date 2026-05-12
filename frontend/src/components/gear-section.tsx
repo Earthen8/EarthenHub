@@ -22,7 +22,7 @@ interface GearItem {
   category: 'tech' | 'creative' | 'hardware'
   icon: React.ElementType
   description: string
-  proficiency?: number
+  proficiency?: 'Beginner' | 'Intermediate' | 'Advanced'
 }
 
 const gearData: GearItem[] = [
@@ -32,42 +32,42 @@ const gearData: GearItem[] = [
     category: 'tech',
     icon: Code2,
     description: 'React framework for production',
-    proficiency: 95,
+    proficiency: 'Advanced',
   },
   {
     name: 'Django',
     category: 'tech',
     icon: Server,
     description: 'Python web framework',
-    proficiency: 90,
+    proficiency: 'Advanced',
   },
   {
     name: 'Docker',
     category: 'tech',
     icon: Container,
     description: 'Containerization platform',
-    proficiency: 85,
+    proficiency: 'Intermediate',
   },
   {
     name: 'PostgreSQL',
     category: 'tech',
     icon: Database,
     description: 'Relational database',
-    proficiency: 88,
+    proficiency: 'Advanced',
   },
   {
     name: 'TypeScript',
     category: 'tech',
     icon: Code2,
     description: 'Type-safe JavaScript',
-    proficiency: 92,
+    proficiency: 'Advanced',
   },
   {
     name: 'React',
     category: 'tech',
     icon: Layers,
     description: 'UI component library',
-    proficiency: 95,
+    proficiency: 'Advanced',
   },
   // Creative Tools
   {
@@ -75,14 +75,14 @@ const gearData: GearItem[] = [
     category: 'creative',
     icon: Figma,
     description: 'Design & prototyping',
-    proficiency: 90,
+    proficiency: 'Advanced',
   },
   {
     name: 'Adobe Suite',
     category: 'creative',
     icon: Palette,
     description: 'Photo & video editing',
-    proficiency: 85,
+    proficiency: 'Intermediate',
   },
   {
     name: 'Canon R100',
@@ -122,51 +122,66 @@ function GearCard({ item }: { item: GearItem }) {
   const [isHovered, setIsHovered] = useState(false)
   const Icon = item.icon
 
+  const getProficiencyColor = (level?: string) => {
+    switch (level) {
+      case 'Advanced':
+        return 'bg-accent/20 text-accent border border-accent/30'
+      case 'Intermediate':
+        return 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+      case 'Beginner':
+        return 'bg-slate-500/20 text-slate-400 border border-slate-500/30'
+      default:
+        return ''
+    }
+  }
+
   return (
     <div
       className={cn(
-        'group glass rounded-2xl p-6 transition-all duration-300',
-        'hover:shadow-lg hover:shadow-accent/5 hover:border-accent/20'
+        'group relative glass rounded-xl p-5 transition-all duration-300',
+        'hover:shadow-xl hover:shadow-accent/10 hover:border-accent/40',
+        'border border-secondary/50'
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="flex items-start gap-4">
-        <div
-          className={cn(
-            'p-3 rounded-xl transition-all duration-300',
-            isHovered ? 'bg-accent text-accent-foreground' : 'bg-secondary/50 text-accent'
-          )}
-        >
-          <Icon className="w-6 h-6" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <h3 className="font-medium text-foreground truncate">{item.name}</h3>
-          <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
-
-          {/* Proficiency Bar */}
+      <div className="flex flex-col h-full">
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div
+            className={cn(
+              'p-2.5 rounded-lg transition-all duration-300 flex-shrink-0',
+              isHovered 
+                ? 'bg-accent/20 text-accent scale-110' 
+                : 'bg-secondary/40 text-accent'
+            )}
+          >
+            <Icon className="w-5 h-5" />
+          </div>
           {item.proficiency && (
-            <div className="mt-3">
-              <div className="h-1 bg-secondary rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-accent transition-all duration-700 ease-out"
-                  style={{
-                    width: isHovered ? `${item.proficiency}%` : '0%',
-                  }}
-                />
-              </div>
-              <span
-                className={cn(
-                  'text-xs text-accent mt-1 block transition-opacity duration-300',
-                  isHovered ? 'opacity-100' : 'opacity-0'
-                )}
-              >
-                {item.proficiency}% proficiency
-              </span>
-            </div>
+            <span
+              className={cn(
+                'px-2.5 py-1 rounded-md text-xs font-medium transition-all duration-300 whitespace-nowrap',
+                getProficiencyColor(item.proficiency)
+              )}
+            >
+              {item.proficiency}
+            </span>
           )}
+        </div>
+
+        <div className="flex-1">
+          <h3 className="font-semibold text-foreground text-sm leading-tight">{item.name}</h3>
+          <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">{item.description}</p>
         </div>
       </div>
+
+      {/* Bottom accent line on hover */}
+      <div
+        className={cn(
+          'absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-accent/0 via-accent to-accent/0 transition-all duration-300',
+          isHovered ? 'opacity-100' : 'opacity-0'
+        )}
+      />
     </div>
   )
 }
@@ -220,7 +235,7 @@ export function GearSection() {
         </div>
 
         {/* Gear Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {filteredGear.map((item) => (
             <GearCard key={item.name} item={item} />
           ))}
