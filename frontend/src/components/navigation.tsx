@@ -103,12 +103,19 @@ export function Navigation() {
       {/* Mobile Header */}
       <header
         className={cn(
-          'fixed top-0 left-0 right-0 z-50 md:hidden',
-          'transition-all duration-300',
-          isScrolled ? heavyGlass : 'bg-transparent'
+          'fixed top-0 left-0 right-0 z-50 md:hidden transition-all duration-300'
         )}
       >
-        <div className="flex items-center justify-between px-4 py-4">
+        {/* Scrolled-only background */}
+        <div 
+          className={cn(
+            'absolute inset-0 transition-opacity duration-300', 
+            heavyGlass, 
+            (isScrolled && !isMobileOpen) ? 'opacity-100' : 'opacity-0'
+          )} 
+        />
+
+        <div className="relative z-10 flex items-center justify-between px-4 py-4">
           <span className="font-serif text-lg font-semibold text-foreground">
             EKS
           </span>
@@ -128,12 +135,15 @@ export function Navigation() {
         {/* Mobile Menu */}
         <div
           className={cn(
-            'absolute top-full left-0 right-0', heavyGlass, 'border-t-0',
-            'transition-all duration-300 overflow-hidden',
-            isMobileOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'
+            'absolute top-0 left-0 right-0 -z-10', 
+            'transition-all duration-500 overflow-hidden',
+            isMobileOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
           )}
         >
-          <div className="p-4 space-y-2">
+          {/* Unified Glass Background: Starts at top, covers header + menu, with rounded bottom */}
+          <div className={cn('absolute inset-0', heavyGlass, 'rounded-b-3xl border-t-0')} aria-hidden="true" />
+          
+          <div className="relative pt-20 p-4 space-y-2">
             {navItems.map((item) => {
               const Icon = item.icon
               const isActive = activeSection === item.href.slice(1)
