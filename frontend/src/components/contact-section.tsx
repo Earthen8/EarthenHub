@@ -94,8 +94,10 @@ export function ContactSection() {
             {/* Contact Details */}
             <div className="space-y-4">
               <a
-                href="mailto:hello@earthen.dev"
+                href="mailto:earthen505@gmail.com"
                 className="flex items-center gap-4 glass rounded-xl p-4 hover:border-accent/30 transition-colors group"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <div className="p-3 rounded-lg bg-secondary/50 text-accent group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
                   <Mail className="w-5 h-5" />
