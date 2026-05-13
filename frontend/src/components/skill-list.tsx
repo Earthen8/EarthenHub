@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Camera, Palette, BarChart3, Code2, Aperture } from 'lucide-react'
+import { Camera, Palette, BarChart3, Code2, Aperture, Layers, Blocks, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { FeaturedProjects } from './featured-projects'
 
@@ -23,52 +23,52 @@ const skills: Skill[] = [
   {
     id: 'engineering',
     index: '01',
-    label: 'Software Engineering',
+    label: 'Full-Stack Development',
     icon: Code2,
     description:
-      'Full-stack systems built with care — from expressive UIs to resilient APIs. I obsess over DX, performance budgets, and code that reads like prose.',
-    stack: ['TypeScript', 'React', 'Next.js', 'Node.js', 'PostgreSQL', 'Tailwind'],
+      'Building resilient and scalable web and mobile applications with a focus on optimized backend performance and clean API integration.',
+    stack: ['Flutter', 'Dart', 'Django', 'REST Framework', 'React', 'Next.js', 'Node.js'],
     accentColor: '#6ee7b7',
   },
   {
-    id: 'design',
+    id: 'systems',
     index: '02',
-    label: 'UI / UX Design',
-    icon: Palette,
+    label: 'Systems Architecture',
+    icon: Layers,
     description:
-      'Research-led design that earns trust before it earns attention. Eight case studies from discovery workshops to pixel-perfect hand-offs.',
-    stack: ['Figma', 'Prototyping', 'User Research', 'Design Systems', 'A/B Testing'],
-    accentColor: '#c4b5fd',
+      'Designing structural blueprints for software infrastructure and implementing data pipelines to ensure operational excellence.',
+    stack: ['Python', 'PostgreSQL', 'API Integration', 'Docker', 'Ubuntu Linux'],
+    accentColor: '#fef08a',
+  },
+  {
+    id: 'modelling',
+    index: '03',
+    label: '3D Environmental Modeling',
+    icon: Blocks,
+    description:
+      'Creating immersive virtual environments and digital twins that bridge physical constraints with digital capabilities.',
+    stack: ['Roblox Studio', '3D Modeling', 'Spatial Design', 'Virtual Environments'],
+    accentColor: '#ff7300ff',
   },
   {
     id: 'photography',
-    index: '03',
+    index: '04',
     label: 'Photography',
     icon: Camera,
     description:
-      'Documenting light, people, and quiet moments. Shooting primarily with Canon R100 + RF 18-45mm — 400+ frames and counting.',
-    stack: ['Canon R100', 'Lightroom', 'Capture One', 'Street', 'Portrait', 'Architecture'],
-    accentColor: '#fbbf24',
-  },
-  {
-    id: 'analytics',
-    index: '04',
-    label: 'Data & Analytics',
-    icon: BarChart3,
-    description:
-      'Turning raw numbers into decisions. I build dashboards and models that surface what matters — consistently delivering 45%+ measurable client improvement.',
-    stack: ['Python', 'Pandas', 'D3.js', 'Recharts', 'SQL', 'Power BI'],
+      'Documenting light, people, and quiet moments. Shooting primarily with Canon R100 + RF 18-45mm — 2000+ frames and counting.',
+    stack: ['Canon R100', 'Lightroom', 'Astrophotography', 'Portrait', 'Architecture'],
     accentColor: '#38bdf8',
   },
   {
-    id: 'creative',
+    id: 'mentorship',
     index: '05',
-    label: 'Creative Direction',
-    icon: Aperture,
+    label: 'Technical Mentorship',
+    icon: Users,
     description:
-      'Tying all the disciplines together into coherent narratives. Brand storytelling, visual systems, and multi-channel campaigns with a distinct point of view.',
-    stack: ['Brand Strategy', 'Art Direction', 'Motion', 'Copywriting', 'Figma', 'After Effects'],
-    accentColor: '#fb923c',
+      'Guiding organizational leadership, managing project documentation, and mentoring peers in software engineering practices.',
+    stack: ['Project Management', 'Agile Development', 'Technical Documentation', 'Leadership'],
+    accentColor: '#c084fc',
   },
 ]
 
@@ -269,7 +269,7 @@ export function SkillList() {
 
         {/* Footer note */}
         <p className="mt-8 text-[11px] font-mono text-white/15 tracking-widest uppercase">
-          {skills.length} disciplines · 3+ years of craft
+          {skills.length} disciplines
         </p>
 
       </div>
