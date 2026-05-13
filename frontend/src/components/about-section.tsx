@@ -27,9 +27,9 @@ export function AboutSection() {
 
   const traits = [
     {
-      icon: Zap,
-      title: 'INTJ Personality',
-      description: 'Strategic thinker who finds clarity in structure and systems',
+      icon: Grid3X3,
+      title: 'System Architect',
+      description: 'Designing scalable, maintainable systems with programming excellence',
     },
     {
       icon: Code2,
@@ -37,9 +37,9 @@ export function AboutSection() {
       description: 'Specialized in end-to-end development and modern architectures',
     },
     {
-      icon: Grid3X3,
-      title: 'System Architect',
-      description: 'Designing scalable, maintainable systems with programming excellence',
+      icon: Zap,
+      title: 'INTJ Personality',
+      description: 'Strategic thinker who finds clarity in structure and systems',
     },
   ]
 
@@ -129,15 +129,15 @@ export function AboutSection() {
 
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  I believe great products emerge from the intersection of clear thinking, elegant architecture, and intentional design. Whether I&apos;m architecting a distributed system, crafting a user interface, or capturing a moment through a lens, the principle remains the same: clarity, purpose, and mastery in every detail.
+                  I&apos;m an INTJ who finds clarity in structure, believing that complexity can always be decoded into intentional architecture. 
+                  My career is a journey into building code that isn&apos;t just functional, but structurally sound and built to endure. 
+                  I treat my work as a &quot;Digital Garden&quot;, a living, documented ecosystem where technical integrity meets strategic value.
                 </p>
 
                 <p>
-                  As a full-stack developer and system architect, I specialize in building solutions that scale—not just in performance, but in maintainability and elegance. Every system I design is a reflection of how I think: structured, intentional, and built to endure. My approach combines technical rigor with creative problem-solving, ensuring that complex challenges transform into elegant, user-centric solutions.
-                </p>
-
-                <p className="text-base pt-4 border-t border-secondary/30">
-                  Beyond code, I explore the world through photography and design, bringing the same architectural mindset to every medium. I&apos;m driven by the challenge of creating systems and experiences that feel effortless to use, yet sophisticated in their foundation.
+                  My focus is the intersection of high-level systems architecture, procedural logic, 
+                  and macro-economic thinking. Whether translating complex data into operational excellence or mentoring the next generation, 
+                  my mission remains the same: ensuring that complex challenges transform into elegant, user-centric solutions.
                 </p>
               </div>
 
