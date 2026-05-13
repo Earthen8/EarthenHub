@@ -412,7 +412,7 @@ export function TimelineSection() {
           <div className="relative">
 
             {/* All items — hidden ones shrink to zero height via CSS */}
-            <div id="timeline-items" className="flex flex-col gap-10 sm:gap-12">
+            <div id="timeline-items" className="flex flex-col">
               {timelineData.map((item, index) => {
                 const isBeyondFold = index >= visibleCount
                 const showCollapsedToggle = !isExpanded && index === INITIAL_VISIBLE_COUNT - 1 && hasMore
@@ -422,10 +422,10 @@ export function TimelineSection() {
                   <React.Fragment key={`${item.year}-${item.title}-${index}`}>
                     <div
                       className={cn(
-                        'transition-[max-height,opacity] duration-500 ease-in-out',
+                        'transition-all duration-500 ease-in-out',
                         isBeyondFold
-                          ? 'max-h-0 opacity-0 overflow-hidden pointer-events-none'
-                          : 'max-h-[800px] opacity-100'
+                          ? 'max-h-0 opacity-0 mb-0 overflow-hidden pointer-events-none'
+                          : 'max-h-[800px] opacity-100 mb-10 sm:mb-12'
                       )}
                       aria-hidden={isBeyondFold}
                     >
