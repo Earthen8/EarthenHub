@@ -418,11 +418,11 @@ export function TimelineSection() {
             {!isExpanded && hasMore && (
               <div
                 aria-hidden="true"
-                className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-background via-background/80 to-transparent pointer-events-none z-10"
+                className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-background via-background/90 to-transparent pointer-events-none z-10"
               />
             )}
 
-            <div className="space-y-10 sm:space-y-12">
+            <div className={cn('space-y-10 sm:space-y-12', !isExpanded && 'pb-12')}>
               {timelineData.map((item, index) => {
                 const isBeyondFold = index >= visibleCount
                 return (
@@ -452,8 +452,7 @@ export function TimelineSection() {
             <div
               ref={toggleRef}
               className={cn(
-                'relative flex flex-col items-center gap-3 mt-8',
-                !isExpanded && '-mt-4'
+                'relative flex flex-col items-center gap-3 mt-12 z-20'
               )}
             >
               <button
