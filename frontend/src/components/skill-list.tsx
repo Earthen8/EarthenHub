@@ -90,8 +90,8 @@ function SkillRow({ skill, isActive, onEnter, onLeave, onClick }: {
         'transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]',
         isActive ? 'py-8 sm:py-10' : 'py-5 sm:py-6',
       )}
-      onMouseEnter={onEnter}
-      onMouseLeave={onLeave}
+      onPointerEnter={(e) => e.pointerType === 'mouse' && onEnter()}
+      onPointerLeave={(e) => e.pointerType === 'mouse' && onLeave()}
       onFocus={onEnter}
       onBlur={onLeave}
       onClick={onClick}
