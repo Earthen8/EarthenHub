@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { GraduationCap, Briefcase, Award, Rocket, ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -408,96 +408,101 @@ export function TimelineSection() {
             className="md:hidden absolute left-[18px] top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-accent/20 to-transparent"
           />
 
-          {/* Items container with overflow clipping when collapsed */}
-          <div
-            className={cn(
-              'relative overflow-hidden transition-all duration-500 ease-in-out'
-            )}
-          >
-            {/* Fade-out gradient mask at the bottom when collapsed */}
-            {!isExpanded && hasMore && (
-              <div
-                aria-hidden="true"
-                className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-background via-background/90 to-transparent pointer-events-none z-10"
-              />
-            )}
+          {/* ── Items + Fade + Toggle — unified block ─────────────── */}
+          <div className="relative">
 
-            <div className={cn('space-y-10 sm:space-y-12', !isExpanded && 'pb-12')}>
+            {/* All items — hidden ones shrink to zero height via CSS */}
+            <div id="timeline-items" className="flex flex-col gap-10 sm:gap-12">
               {timelineData.map((item, index) => {
                 const isBeyondFold = index >= visibleCount
+                const showCollapsedToggle = !isExpanded && index === INITIAL_VISIBLE_COUNT - 1 && hasMore
+                const showExpandedToggle = isExpanded && index === timelineData.length - 1 && hasMore
+
                 return (
-                  <div
-                    key={`${item.year}-${item.title}`}
-                    className={cn(
-                      'transition-all duration-500 ease-in-out',
-                      isBeyondFold
-                        ? 'opacity-0 max-h-0 overflow-hidden pointer-events-none'
-                        : 'opacity-100 max-h-[800px]'
+                  <React.Fragment key={`${item.year}-${item.title}-${index}`}>
+                    <div
+                      className={cn(
+                        'transition-[max-height,opacity] duration-500 ease-in-out',
+                        isBeyondFold
+                          ? 'max-h-0 opacity-0 overflow-hidden pointer-events-none'
+                          : 'max-h-[800px] opacity-100'
+                      )}
+                      aria-hidden={isBeyondFold}
+                    >
+                      <TimelineItem
+                        item={item}
+                        index={index}
+                        isVisible={visibleItems[index]}
+                      />
+                    </div>
+
+                    {/* Gradient + button — injected directly into the loop */}
+                    {(showCollapsedToggle || showExpandedToggle) && (
+                      <div className="relative">
+                        {/* Fade-out gradient — only when collapsed */}
+                        {showCollapsedToggle && (
+                          <div
+                            aria-hidden="true"
+                            className={cn(
+                              'absolute bottom-full left-0 right-0 h-40 pointer-events-none transition-opacity duration-300',
+                              'bg-gradient-to-t from-background via-background/80 to-transparent'
+                            )}
+                          />
+                        )}
+
+                        {/* Toggle button */}
+                        <div
+                          ref={showExpandedToggle ? null : toggleRef}
+                          className="relative flex flex-col items-center gap-3 pt-2 z-20"
+                        >
+                          <button
+                            onClick={handleToggle}
+                            aria-expanded={isExpanded}
+                            aria-controls="timeline-items"
+                            className={cn(
+                              'group relative flex items-center gap-2 px-6 py-3',
+                              'text-sm font-medium text-foreground/80',
+                              'bg-white/[0.05] backdrop-blur-md',
+                              'border border-white/10 rounded-full',
+                              'hover:bg-white/[0.09] hover:border-white/20 hover:text-foreground',
+                              'active:scale-95',
+                              'transition-all duration-200 ease-out',
+                              'shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)]',
+                              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60'
+                            )}
+                          >
+                            {isExpanded ? (
+                              <>
+                                <ChevronUp
+                                  className="w-4 h-4 transition-transform duration-300 group-hover:-translate-y-0.5"
+                                  aria-hidden="true"
+                                />
+                                Show Less
+                              </>
+                            ) : (
+                              <>
+                                <ChevronDown
+                                  className="w-4 h-4 transition-transform duration-300 group-hover:translate-y-0.5"
+                                  aria-hidden="true"
+                                />
+                                {`See ${totalItems - INITIAL_VISIBLE_COUNT} More Experiences`}
+                              </>
+                            )}
+                          </button>
+
+                          {!isExpanded && (
+                            <p className="text-xs text-muted-foreground/50">
+                              {totalItems - INITIAL_VISIBLE_COUNT} more entries hidden
+                            </p>
+                          )}
+                        </div>
+                      </div>
                     )}
-                    aria-hidden={isBeyondFold}
-                  >
-                    <TimelineItem
-                      item={item}
-                      index={index}
-                      isVisible={visibleItems[index]}
-                    />
-                  </div>
+                  </React.Fragment>
                 )
               })}
             </div>
           </div>
-
-          {/* ── See More / See Less Toggle ─────────────────────────── */}
-          {hasMore && (
-            <div
-              ref={toggleRef}
-              className={cn(
-                'relative flex flex-col items-center gap-3 mt-12 z-20'
-              )}
-            >
-              <button
-                onClick={handleToggle}
-                aria-expanded={isExpanded}
-                aria-controls="timeline-items"
-                className={cn(
-                  'group relative flex items-center gap-2 px-6 py-3',
-                  'text-sm font-medium text-foreground/80',
-                  'bg-white/[0.05] backdrop-blur-md',
-                  'border border-white/10 rounded-full',
-                  'hover:bg-white/[0.09] hover:border-white/20 hover:text-foreground',
-                  'active:scale-95',
-                  'transition-all duration-200 ease-out',
-                  'shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)]',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60'
-                )}
-              >
-                {isExpanded ? (
-                  <>
-                    <ChevronUp
-                      className="w-4 h-4 transition-transform duration-300 group-hover:-translate-y-0.5"
-                      aria-hidden="true"
-                    />
-                    Show Less
-                  </>
-                ) : (
-                  <>
-                    <ChevronDown
-                      className="w-4 h-4 transition-transform duration-300 group-hover:translate-y-0.5"
-                      aria-hidden="true"
-                    />
-                    {`See ${totalItems - INITIAL_VISIBLE_COUNT} More Experiences`}
-                  </>
-                )}
-              </button>
-
-              {/* Remaining count indicator when collapsed */}
-              {!isExpanded && (
-                <p className="text-xs text-muted-foreground/50">
-                  {totalItems - INITIAL_VISIBLE_COUNT} more entries hidden
-                </p>
-              )}
-            </div>
-          )}
         </div>
       </div>
     </section>
