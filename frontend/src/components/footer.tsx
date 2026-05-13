@@ -22,9 +22,7 @@ export function Footer() {
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>© {currentYear}</span>
             <span className="hidden sm:inline">•</span>
-            <span className="hidden sm:inline">Made with</span>
-            <Heart className="w-4 h-4 text-accent hidden sm:inline fill-accent" />
-            <span className="hidden sm:inline">& Next.js</span>
+            <span className="hidden sm:inline">Made with Next.js</span>
           </div>
 
           {/* Quick Links */}
