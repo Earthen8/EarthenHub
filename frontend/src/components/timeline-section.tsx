@@ -351,7 +351,7 @@ export function TimelineSection() {
   return (
     <section
       id="timeline"
-      className="py-20 lg:py-32 relative"
+      className="py-16 lg:py-28 relative"
       ref={sectionRef}
       aria-label="Journey timeline"
     >

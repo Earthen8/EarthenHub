@@ -195,7 +195,7 @@ export function GearSection() {
       : gearData.filter((item) => item.category === activeCategory)
 
   return (
-    <section id="gear" className="py-20 lg:py-32 relative">
+    <section id="gear" className="py-16 lg:py-28 relative">
       {/* Background Accent */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />

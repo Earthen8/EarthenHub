@@ -60,7 +60,7 @@ export function ContactSection() {
   }
 
   return (
-    <section id="contact" className="py-20 lg:py-32 relative">
+    <section id="contact" className="py-16 lg:py-28 relative">
       {/* Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-accent/5 to-transparent" />
