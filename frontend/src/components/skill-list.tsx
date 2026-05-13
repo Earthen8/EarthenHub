@@ -189,9 +189,9 @@ function SkillRow({ skill, isActive, onEnter, onLeave }: {
   )
 }
 
-/* ─── BentoGrid (now: SkillList) ─────────────────────────────── */
+/* ─── SkillList ─────────────────────────────── */
 
-export function BentoGrid() {
+export function SkillList() {
   const [activeId, setActiveId] = useState<string | null>(null)
 
   return (
