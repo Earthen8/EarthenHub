@@ -6,115 +6,162 @@ import {
   Server,
   Container,
   Database,
-  Palette,
   Camera,
-  Monitor,
-  Headphones,
   Cpu,
   Layers,
   Figma,
   Laptop,
+  Github,
+  Smartphone,
+  Terminal,
+  Sparkles,
+  Atom,
+  HardDrive,
+  Network,
+  Gamepad2,
+  Box,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 interface GearItem {
   name: string
-  category: 'tech' | 'creative' | 'hardware'
+  category: 'dev' | 'infra' | 'design' | 'hardware'
   icon: React.ElementType
   description: string
   proficiency?: 'Beginner' | 'Intermediate' | 'Advanced'
 }
 
 const gearData: GearItem[] = [
-  // Tech Stack
+  // Development
   {
-    name: 'Next.js',
-    category: 'tech',
-    icon: Code2,
-    description: 'React framework for production',
+    name: 'Flutter & Dart',
+    category: 'dev',
+    icon: Smartphone,
+    description: 'Building custom procedural animations and cross-platform mobile applications.',
     proficiency: 'Advanced',
   },
   {
-    name: 'Django',
-    category: 'tech',
-    icon: Server,
-    description: 'Python web framework',
+    name: 'Python & Django',
+    category: 'dev',
+    icon: Terminal,
+    description: 'Architecting scalable backend systems and REST API integrations.',
+    proficiency: 'Advanced',
+  },
+  {
+    name: 'Google Antigravity',
+    category: 'dev',
+    icon: Sparkles,
+    description: 'AI-Assisted Programming and Development.',
+    proficiency: 'Advanced',
+  },
+  {
+    name: 'Cursor IDE',
+    category: 'dev',
+    icon: Code2,
+    description: 'AI-Assisted Programming and Development.',
+    proficiency: 'Advanced',
+  },
+  {
+    name: 'React & Vite',
+    category: 'dev',
+    icon: Atom,
+    description: 'Building modern web applications with cutting-edge web technologies.',
+    proficiency: 'Intermediate',
+  },
+  {
+    name: 'Android Studio',
+    category: 'dev',
+    icon: Smartphone,
+    description: 'Building native Android applications.',
+  },
+  // Infrastructure
+  {
+    name: 'Github',
+    category: 'infra',
+    icon: Github,
+    description: 'Version control and code collaboration',
     proficiency: 'Advanced',
   },
   {
     name: 'Docker',
-    category: 'tech',
+    category: 'infra',
     icon: Container,
-    description: 'Containerization platform',
+    description: 'Containerizing applications for consistent deployment workflows',
+    proficiency: 'Intermediate',
+  },
+  {
+    name: 'Ubuntu Linux',
+    category: 'infra',
+    icon: HardDrive,
+    description: 'Managing server environments and deployments',
     proficiency: 'Intermediate',
   },
   {
     name: 'PostgreSQL',
-    category: 'tech',
+    category: 'infra',
     icon: Database,
-    description: 'Relational database',
-    proficiency: 'Advanced',
+    description: 'Managing structured relational database systems',
   },
   {
-    name: 'TypeScript',
-    category: 'tech',
-    icon: Code2,
-    description: 'Type-safe JavaScript',
-    proficiency: 'Advanced',
+    name: 'MariaDB',
+    category: 'infra',
+    icon: Database,
+    description: 'Relational database management system',
   },
   {
-    name: 'React',
-    category: 'tech',
-    icon: Layers,
-    description: 'UI component library',
-    proficiency: 'Advanced',
+    name: 'Tailscale',
+    category: 'infra',
+    icon: Network,
+    description: 'Secure personal networking for remote access',
   },
-  // Creative Tools
+  // Design
   {
     name: 'Figma',
-    category: 'creative',
+    category: 'design',
     icon: Figma,
-    description: 'Design & prototyping',
+    description: 'Prototyping UI/UX flows & prototyping',
     proficiency: 'Advanced',
   },
   {
-    name: 'Adobe Suite',
-    category: 'creative',
-    icon: Palette,
-    description: 'Photo & video editing',
+    name: 'Roblox Studio',
+    category: 'design',
+    icon: Gamepad2,
+    description: '3D environment and game development for Roblox platform.',
     proficiency: 'Intermediate',
   },
   {
-    name: 'Canon R100',
-    category: 'creative',
-    icon: Camera,
-    description: 'Mirrorless camera',
+    name: 'SketchUp',
+    category: 'design',
+    icon: Box,
+    description: '3D modeling for product and environment design.',
+    proficiency: 'Intermediate',
   },
   // Hardware
   {
-    name: 'MacBook Pro 16"',
+    name: 'ASUS Zenbook 14 OLED',
     category: 'hardware',
     icon: Laptop,
-    description: 'M3 Pro • 36GB RAM',
+    description: 'Ryzen 7 8840HS • 16GB RAM',
   },
   {
-    name: 'LG UltraFine 5K',
+    name: 'Canon R100',
     category: 'hardware',
-    icon: Monitor,
-    description: '27" display',
+    icon: Camera,
+    description: 'RF-S18-45mm F4.5-6.3 IS STM',
   },
   {
-    name: 'Sony WH-1000XM5',
+    name: 'Lenovo IdeaPad S340-14API',
     category: 'hardware',
-    icon: Headphones,
-    description: 'Noise-canceling',
+    icon: Laptop,
+    description: 'Ryzen 3 3200U • 8GB RAM',
   },
 ]
 
 const categories = [
-  { key: 'all', label: 'All Gear' },
-  { key: 'tech', label: 'Tech Stack' },
-  { key: 'creative', label: 'Creative' },
+  { key: 'all', label: 'All Tools' },
+  { key: 'dev', label: 'Development' },
+  { key: 'infra', label: 'Infrastructure' },
+  { key: 'design', label: 'Design' },
   { key: 'hardware', label: 'Hardware' },
 ]
 
