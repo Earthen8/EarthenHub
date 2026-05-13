@@ -74,18 +74,19 @@ const skills: Skill[] = [
 
 /* ─── Skill Row ──────────────────────────────────────────────── */
 
-function SkillRow({ skill, isActive, onEnter, onLeave }: {
+function SkillRow({ skill, isActive, onEnter, onLeave, onClick }: {
   skill: Skill
   isActive: boolean
   onEnter: () => void
   onLeave: () => void
+  onClick: () => void
 }) {
   const Icon = skill.icon
 
   return (
     <div
       className={cn(
-        'group relative border-t border-white/[0.07] cursor-default select-none',
+        'group relative border-t border-white/[0.07] cursor-pointer select-none',
         'transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]',
         isActive ? 'py-8 sm:py-10' : 'py-5 sm:py-6',
       )}
@@ -93,6 +94,7 @@ function SkillRow({ skill, isActive, onEnter, onLeave }: {
       onMouseLeave={onLeave}
       onFocus={onEnter}
       onBlur={onLeave}
+      onClick={onClick}
       tabIndex={0}
       role="listitem"
       aria-expanded={isActive}
@@ -260,6 +262,7 @@ export function SkillList() {
               isActive={activeId === skill.id}
               onEnter={() => setActiveId(skill.id)}
               onLeave={() => setActiveId(null)}
+              onClick={() => setActiveId(activeId === skill.id ? null : skill.id)}
             />
           ))}
         </div>
