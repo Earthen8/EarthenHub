@@ -25,7 +25,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-interface GearItem {
+interface ToolItem {
   name: string
   category: 'dev' | 'infra' | 'design' | 'hardware'
   icon: React.ElementType
@@ -33,7 +33,7 @@ interface GearItem {
   proficiency?: 'Beginner' | 'Intermediate' | 'Advanced'
 }
 
-const gearData: GearItem[] = [
+const toolsData: ToolItem[] = [
   // Development
   {
     name: 'Flutter & Dart',
@@ -195,7 +195,7 @@ function useBreakpointThreshold() {
   return threshold
 }
 
-function GearCard({ item }: { item: GearItem }) {
+function ToolCard({ item }: { item: ToolItem }) {
   const [isHovered, setIsHovered] = useState(false)
   const Icon = item.icon
 
@@ -263,19 +263,19 @@ function GearCard({ item }: { item: GearItem }) {
   )
 }
 
-export function GearSection() {
+export function ToolsSection() {
   const [activeCategory, setActiveCategory] = useState('all')
   const [isExpanded, setIsExpanded] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
   const threshold = useBreakpointThreshold()
 
-  const filteredGear =
+  const filteredTools =
     activeCategory === 'all'
-      ? gearData
-      : gearData.filter((item) => item.category === activeCategory)
+      ? toolsData
+      : toolsData.filter((item) => item.category === activeCategory)
 
   // Show toggle on "All Tools" tab when items exceed threshold
-  const showToggle = activeCategory === 'all' && filteredGear.length > threshold
+  const showToggle = activeCategory === 'all' && filteredTools.length > threshold
 
   // Reset expansion when switching categories
   const handleCategoryChange = (key: string) => {
@@ -295,7 +295,7 @@ export function GearSection() {
   }
 
   return (
-    <section ref={sectionRef} id="gear" className="py-16 lg:py-28 relative">
+    <section ref={sectionRef} id="tools" className="py-16 lg:py-28 relative">
       {/* Background Accent */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
@@ -334,7 +334,7 @@ export function GearSection() {
           ))}
         </div>
 
-        {/* Gear Grid Wrapper */}
+        {/* Tools Grid Wrapper */}
         <div
           className="relative transition-[max-height] duration-700 ease-in-out overflow-hidden"
           style={{
@@ -343,8 +343,8 @@ export function GearSection() {
         >
           {/* Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {filteredGear.map((item) => (
-              <GearCard key={item.name} item={item} />
+            {filteredTools.map((item) => (
+              <ToolCard key={item.name} item={item} />
             ))}
           </div>
 
@@ -391,7 +391,7 @@ export function GearSection() {
                 ) : (
                   <>
                     Show All{' '}
-                    <span className="text-accent font-semibold">{filteredGear.length}</span> Tools
+                    <span className="text-accent font-semibold">{filteredTools.length}</span> Tools
                     <ChevronDown className="w-4 h-4 transition-transform duration-300 group-hover:translate-y-0.5" />
                   </>
                 )}

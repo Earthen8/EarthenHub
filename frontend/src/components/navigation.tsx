@@ -8,7 +8,7 @@ const navItems = [
   { label: 'Home', href: '#hero', icon: Home },
   { label: 'Worlds', href: '#worlds', icon: Grid3X3 },
   { label: 'Journey', href: '#timeline', icon: Briefcase },
-  { label: 'Gear', href: '#gear', icon: Wrench },
+  { label: 'Tools', href: '#tools', icon: Wrench },
   { label: 'Contact', href: '#contact', icon: Mail },
 ]
 
