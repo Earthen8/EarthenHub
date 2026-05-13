@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   Code2,
   Server,
@@ -20,6 +20,8 @@ import {
   Network,
   Gamepad2,
   Box,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -165,6 +167,34 @@ const categories = [
   { key: 'hardware', label: 'Hardware' },
 ]
 
+// Mobile (1 col): 3 × 160 + 2 × 12 = 504px
+// Tablet (2 col): 3 × 160 + 2 × 12 = 504px
+// Desktop (3 col): 3 × 160 + 2 × 12 = 504px
+const COLLAPSED_HEIGHT = 504
+
+// Thresholds
+// Mobile  = 1 col → >3 items
+// Tablet  = 2 col → >6 items
+// Desktop = 3 col → >9 items
+
+function useBreakpointThreshold() {
+  const [threshold, setThreshold] = useState(9)
+
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth
+      if (w < 640) setThreshold(3)
+      else if (w < 1024) setThreshold(6)
+      else setThreshold(9)
+    }
+    update()
+    window.addEventListener('resize', update)
+    return () => window.removeEventListener('resize', update)
+  }, [])
+
+  return threshold
+}
+
 function GearCard({ item }: { item: GearItem }) {
   const [isHovered, setIsHovered] = useState(false)
   const Icon = item.icon
@@ -197,8 +227,8 @@ function GearCard({ item }: { item: GearItem }) {
           <div
             className={cn(
               'p-2.5 rounded-lg transition-all duration-300 flex-shrink-0',
-              isHovered 
-                ? 'bg-accent/20 text-accent scale-110' 
+              isHovered
+                ? 'bg-accent/20 text-accent scale-110'
                 : 'bg-secondary/40 text-accent'
             )}
           >
@@ -235,14 +265,37 @@ function GearCard({ item }: { item: GearItem }) {
 
 export function GearSection() {
   const [activeCategory, setActiveCategory] = useState('all')
+  const [isExpanded, setIsExpanded] = useState(false)
+  const sectionRef = useRef<HTMLElement>(null)
+  const threshold = useBreakpointThreshold()
 
   const filteredGear =
     activeCategory === 'all'
       ? gearData
       : gearData.filter((item) => item.category === activeCategory)
 
+  // Show toggle on "All Tools" tab when items exceed threshold
+  const showToggle = activeCategory === 'all' && filteredGear.length > threshold
+
+  // Reset expansion when switching categories
+  const handleCategoryChange = (key: string) => {
+    setActiveCategory(key)
+    setIsExpanded(false)
+  }
+
+  const handleToggle = () => {
+    if (isExpanded) {
+      // Collapsing: scroll back to section header smoothly
+      sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      // Small delay so scroll starts before height animates
+      setTimeout(() => setIsExpanded(false), 80)
+    } else {
+      setIsExpanded(true)
+    }
+  }
+
   return (
-    <section id="gear" className="py-16 lg:py-28 relative">
+    <section ref={sectionRef} id="gear" className="py-16 lg:py-28 relative">
       {/* Background Accent */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/2 left-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
@@ -268,7 +321,7 @@ export function GearSection() {
           {categories.map((cat) => (
             <button
               key={cat.key}
-              onClick={() => setActiveCategory(cat.key)}
+              onClick={() => handleCategoryChange(cat.key)}
               className={cn(
                 'px-4 py-2 rounded-full text-sm font-medium transition-all duration-300',
                 activeCategory === cat.key
@@ -281,12 +334,71 @@ export function GearSection() {
           ))}
         </div>
 
-        {/* Gear Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {filteredGear.map((item) => (
-            <GearCard key={item.name} item={item} />
-          ))}
+        {/* Gear Grid Wrapper */}
+        <div
+          className="relative transition-[max-height] duration-700 ease-in-out overflow-hidden"
+          style={{
+            maxHeight: showToggle && !isExpanded ? `${COLLAPSED_HEIGHT}px` : '4000px',
+          }}
+        >
+          {/* Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {filteredGear.map((item) => (
+              <GearCard key={item.name} item={item} />
+            ))}
+          </div>
+
+          {/* Gradient fade mask */}
+          {showToggle && !isExpanded && (
+            <div
+              aria-hidden="true"
+              className="absolute bottom-0 left-0 right-0 h-48 pointer-events-none"
+              style={{
+                background:
+                  'linear-gradient(to top, var(--background) 0%, color-mix(in srgb, var(--background) 85%, transparent) 40%, transparent 100%)',
+              }}
+            />
+          )}
         </div>
+
+        {/* Toggle Button */}
+        {showToggle && (
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={handleToggle}
+              className={cn(
+                'group relative inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-medium',
+                'glass border border-secondary/50 text-muted-foreground',
+                'hover:text-foreground hover:border-accent/40 hover:shadow-lg hover:shadow-accent/10',
+                'transition-all duration-300'
+              )}
+            >
+              {/* Subtle animated accent ring on hover */}
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                style={{
+                  background:
+                    'radial-gradient(ellipse at center, color-mix(in srgb, var(--accent) 8%, transparent) 0%, transparent 70%)',
+                }}
+              />
+              <span className="relative flex items-center gap-2">
+                {isExpanded ? (
+                  <>
+                    <ChevronUp className="w-4 h-4 transition-transform duration-300 group-hover:-translate-y-0.5" />
+                    Show Less
+                  </>
+                ) : (
+                  <>
+                    Show All{' '}
+                    <span className="text-accent font-semibold">{filteredGear.length}</span> Tools
+                    <ChevronDown className="w-4 h-4 transition-transform duration-300 group-hover:translate-y-0.5" />
+                  </>
+                )}
+              </span>
+            </button>
+          </div>
+        )}
       </div>
     </section>
   )
