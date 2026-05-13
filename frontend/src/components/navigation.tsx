@@ -12,6 +12,14 @@ const navItems = [
   { label: 'Contact', href: '#contact', icon: Mail },
 ]
 
+const heavyGlass = cn(
+  'backdrop-blur-2xl backdrop-saturate-150',
+  'bg-white/5 bg-gradient-to-br from-white/10 via-transparent to-transparent',
+  'border border-white/10',
+  'shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.15)]'
+)
+
+
 export function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
@@ -53,7 +61,7 @@ export function Navigation() {
       <nav
         className={cn(
           'fixed bottom-8 left-1/2 -translate-x-1/2 z-50 hidden md:flex',
-          'glass-strong rounded-full px-2 py-2',
+          heavyGlass, 'rounded-full px-2 py-2',
           'transition-all duration-500',
           isScrolled ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         )}
@@ -97,7 +105,7 @@ export function Navigation() {
         className={cn(
           'fixed top-0 left-0 right-0 z-50 md:hidden',
           'transition-all duration-300',
-          isScrolled ? 'glass-strong' : 'bg-transparent'
+          isScrolled ? heavyGlass : 'bg-transparent'
         )}
       >
         <div className="flex items-center justify-between px-4 py-4">
@@ -120,7 +128,7 @@ export function Navigation() {
         {/* Mobile Menu */}
         <div
           className={cn(
-            'absolute top-full left-0 right-0 glass-strong',
+            'absolute top-full left-0 right-0', heavyGlass, 'border-t-0',
             'transition-all duration-300 overflow-hidden',
             isMobileOpen ? 'max-h-80 opacity-100' : 'max-h-0 opacity-0'
           )}
@@ -154,7 +162,7 @@ export function Navigation() {
       <nav
         className={cn(
           'fixed top-6 left-1/2 -translate-x-1/2 z-50 hidden md:flex',
-          'glass rounded-full px-6 py-3',
+          heavyGlass, 'rounded-full px-6 py-3',
           'transition-all duration-500',
           isScrolled ? 'opacity-0 -translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0'
         )}
