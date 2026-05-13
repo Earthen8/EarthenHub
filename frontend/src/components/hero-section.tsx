@@ -1,11 +1,12 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { ArrowDown, Code2, Camera, Palette } from 'lucide-react'
+import { ArrowDown, Code2, Camera, Palette, Layers } from 'lucide-react'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
 const taglines = [
+  'System Thinker',
   'Building Digital Experiences',
   'Crafting Visual Stories',
   'Designing with Purpose',
@@ -14,23 +15,50 @@ const taglines = [
 
 const roles = [
   { icon: Code2, label: 'Full Stack Developer' },
-  { icon: Palette, label: 'UI/UX Designer' },
+  { icon: Layers, label: 'System Architect' },
   { icon: Camera, label: 'Photographer' },
 ]
 
 export function HeroSection() {
-  const [currentTagline, setCurrentTagline] = useState(0)
   const [isVisible, setIsVisible] = useState(false)
   const [shouldStickPortrait, setShouldStickPortrait] = useState(true)
   const portraitRef = useRef<HTMLDivElement>(null)
 
+  // Typewriter state
+  const [displayedText, setDisplayedText] = useState('')
+  const [taglineIndex, setTaglineIndex] = useState(0)
+  const [isDeleting, setIsDeleting] = useState(false)
+
   useEffect(() => {
     setIsVisible(true)
-    const interval = setInterval(() => {
-      setCurrentTagline((prev) => (prev + 1) % taglines.length)
-    }, 3000)
-    return () => clearInterval(interval)
   }, [])
+
+  useEffect(() => {
+    const currentFull = taglines[taglineIndex]
+
+    if (!isDeleting && displayedText === currentFull) {
+      // Full text shown — pause 2s then start deleting
+      const pause = setTimeout(() => setIsDeleting(true), 2000)
+      return () => clearTimeout(pause)
+    }
+
+    if (isDeleting && displayedText === '') {
+      // Fully deleted — move to next tagline
+      setIsDeleting(false)
+      setTaglineIndex((prev) => (prev + 1) % taglines.length)
+      return
+    }
+
+    const speed = isDeleting ? 50 : 150
+    const timer = setTimeout(() => {
+      setDisplayedText(isDeleting
+        ? currentFull.slice(0, displayedText.length - 1)
+        : currentFull.slice(0, displayedText.length + 1)
+      )
+    }, speed)
+
+    return () => clearTimeout(timer)
+  }, [displayedText, isDeleting, taglineIndex])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -104,20 +132,11 @@ export function HeroSection() {
             </div>
 
             {/* Dynamic Tagline */}
-            <div className="h-8 relative overflow-hidden">
-              {taglines.map((tagline, index) => (
-                <p
-                  key={tagline}
-                  className={cn(
-                    'absolute inset-0 text-xl text-muted-foreground transition-all duration-500',
-                    currentTagline === index
-                      ? 'opacity-100 translate-y-0'
-                      : 'opacity-0 translate-y-4'
-                  )}
-                >
-                  {tagline}
-                </p>
-              ))}
+            <div className="h-8 flex items-center">
+              <p className="text-xl text-muted-foreground">
+                {displayedText}
+                <span className="inline-block w-[2px] h-[1.1em] ml-[2px] align-middle bg-accent animate-blink" />
+              </p>
             </div>
 
             {/* CTA */}
