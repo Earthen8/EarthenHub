@@ -17,19 +17,19 @@ import { cn } from '@/lib/utils'
 const socialLinks = [
   {
     name: 'LinkedIn',
-    href: 'https://linkedin.com/in/',
+    href: 'https://www.linkedin.com/in/earthen-krisdian-setya/',
     icon: Linkedin,
     color: 'hover:text-blue-400',
   },
   {
     name: 'GitHub',
-    href: 'https://github.com/',
+    href: 'https://github.com/Earthen8',
     icon: Github,
     color: 'hover:text-foreground',
   },
   {
     name: 'Instagram',
-    href: 'https://instagram.com/',
+    href: 'https://instagram.com/3arthen/',
     icon: Instagram,
     color: 'hover:text-pink-400',
   },
@@ -85,9 +85,9 @@ export function ContactSection() {
                 Get in Touch
               </h3>
               <p className="text-muted-foreground leading-relaxed">
-                {"I'm"} always open to discussing new projects, creative ideas, or opportunities
-                to be part of your vision. Whether {"it's"} development, design, or photography,
-                let&apos;s create something amazing together.
+                I'm always open to discussing new projects, creative ideas, or opportunities
+                to be part of your vision. Whether it's development, design, or photography,
+                let's create something amazing together.
               </p>
             </div>
 
@@ -102,7 +102,7 @@ export function ContactSection() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Email</p>
-                  <p className="text-foreground font-medium">hello@earthen.dev</p>
+                  <p className="text-foreground font-medium">earthen505@gmail.com</p>
                 </div>
                 <ArrowUpRight className="w-5 h-5 ml-auto text-muted-foreground group-hover:text-accent transition-colors" />
               </a>
@@ -113,7 +113,7 @@ export function ContactSection() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Location</p>
-                  <p className="text-foreground font-medium">Jakarta, Indonesia</p>
+                  <p className="text-foreground font-medium">South Tangerang, Indonesia</p>
                 </div>
               </div>
             </div>
