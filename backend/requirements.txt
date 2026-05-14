@@ -1,0 +1,16 @@
+# Core Django
+Django>=5.2.9
+djangorestframework
+django-cors-headers
+
+# Production Server Requirements
+gunicorn
+whitenoise
+python-dotenv
+dj-database-url
+
+# Media Handling
+Pillow
+
+# Database
+psycopg2-binary
