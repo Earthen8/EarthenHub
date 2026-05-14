@@ -2,21 +2,41 @@ from rest_framework import serializers
 from .models import Discipline, Project, Experience, Tool, Philosophy, PhilosophyTrait, Inquiry
 
 class DisciplineSerializer(serializers.ModelSerializer):
+    id = serializers.CharField(source='slug')
+    accentColor = serializers.CharField(source='accent_color')
+    
     class Meta:
         model = Discipline
-        fields = ['id', 'index', 'label', 'slug', 'icon', 'description', 'stack', 'accent_color', 'sort_order']
+        fields = ['id', 'index', 'label', 'slug', 'icon', 'description', 'stack', 'accentColor', 'sort_order']
 
 class ProjectSerializer(serializers.ModelSerializer):
-    discipline = DisciplineSerializer(read_only=True)
+    tag = serializers.CharField(source='discipline.label', read_only=True)
+    problem = serializers.CharField(source='challenge')
+    solution = serializers.CharField(source='approach')
+    techStack = serializers.JSONField(source='technology_tags')
+    outcome = serializers.JSONField(source='outcome_metrics')
+    imageUrl = serializers.SerializerMethodField()
     
     class Meta:
         model = Project
-        fields = ['id', 'title', 'slug', 'discipline', 'challenge', 'approach', 'outcome_metrics', 'technology_tags', 'image_url', 'image', 'sort_order', 'is_featured']
+        fields = ['id', 'title', 'slug', 'tag', 'problem', 'solution', 'techStack', 'outcome', 'imageUrl', 'sort_order', 'is_featured']
+
+    def get_imageUrl(self, obj):
+        if obj.image:
+            return obj.image.url
+        return obj.image_url
 
 class ExperienceSerializer(serializers.ModelSerializer):
+    year = serializers.SerializerMethodField()
+    
     class Meta:
         model = Experience
-        fields = ['id', 'title', 'organization', 'description', 'start_date', 'end_date', 'is_present', 'type']
+        fields = ['id', 'year', 'title', 'organization', 'description', 'type']
+
+    def get_year(self, obj):
+        if obj.is_present:
+            return "Present"
+        return obj.start_date.strftime("%b %Y")
 
 class ToolSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,10 +50,12 @@ class PhilosophyTraitSerializer(serializers.ModelSerializer):
 
 class PhilosophySerializer(serializers.ModelSerializer):
     traits = PhilosophyTraitSerializer(many=True, read_only=True)
+    professionalTitles = serializers.CharField(source='professional_titles')
+    philosophyText = serializers.CharField(source='philosophy_text')
     
     class Meta:
         model = Philosophy
-        fields = ['id', 'name', 'professional_titles', 'philosophy_text', 'traits']
+        fields = ['id', 'name', 'professionalTitles', 'philosophyText', 'traits']
 
 class InquirySerializer(serializers.ModelSerializer):
     class Meta:

@@ -1,7 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
 class Discipline(models.Model):
     """Represents a category of work or skill ('My Worlds' in frontend)."""
     index = models.CharField(max_length=10, help_text="e.g., '01', '02'")
