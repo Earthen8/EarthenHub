@@ -129,15 +129,14 @@ export function AboutSection() {
 
               <div className="space-y-4 text-muted-foreground leading-relaxed">
                 <p>
-                  I&apos;m an INTJ who finds clarity in structure, believing that complexity can always be decoded into intentional architecture. 
-                  My career is a journey into building code that isn&apos;t just functional, but structurally sound and built to endure. 
-                  I treat my work as a &quot;Digital Garden&quot;, a living, documented ecosystem where technical integrity meets strategic value.
+                  I am a systems builder who finds clarity in structure and intentional architecture. 
+                  I view my work as a digital garden where technical integrity and long term value grow together. 
+                  My focus is on creating software that is not just functional but structurally sound and built to endure.
                 </p>
-
                 <p>
-                  My focus is the intersection of high-level systems architecture, procedural logic, 
-                  and macro-economic thinking. Whether translating complex data into operational excellence or mentoring the next generation, 
-                  my mission remains the same: ensuring that complex challenges transform into elegant, user-centric solutions.
+                  By combining systems architecture with procedural logic, I bridge the gap between technical execution and business goals. 
+                  Whether I am solving complex data problems or mentoring others my mission is to transform difficult challenges into elegant solutions. 
+                  I believe the best digital tools are those that are robust in their foundation and intuitive to use.
                 </p>
               </div>
 
