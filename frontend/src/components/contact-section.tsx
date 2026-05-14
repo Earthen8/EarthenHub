@@ -13,6 +13,7 @@ import {
   Loader2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { sendEmail } from '@/app/actions'
 
 const socialLinks = [
   {
@@ -40,6 +41,7 @@ export function ContactSection() {
     name: '',
     email: '',
     message: '',
+    honeypot: '',
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -48,14 +50,22 @@ export function ContactSection() {
     e.preventDefault()
     setIsSubmitting(true)
 
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    const formData = new FormData()
+    formData.append('name', formState.name)
+    formData.append('email', formState.email)
+    formData.append('message', formState.message)
+    formData.append('honeypot', formState.honeypot)
+
+    const result = await sendEmail(formData)
+
+    if (result.success) {
+      setIsSubmitted(true)
+      setFormState({ name: '', email: '', message: '', honeypot: '' })
+    } else {
+      alert(result.error || "Failed to send email. Check console for details.")
+    }
 
     setIsSubmitting(false)
-    setIsSubmitted(true)
-    setFormState({ name: '', email: '', message: '' })
-
-    // Reset success state after 3 seconds
     setTimeout(() => setIsSubmitted(false), 3000)
   }
 
@@ -150,6 +160,15 @@ export function ContactSection() {
           {/* Contact Form */}
           <div className="glass rounded-2xl p-6 sm:p-8">
             <form onSubmit={handleSubmit} className="space-y-6">
+              <input
+                type="text"
+                name="honeypot"
+                value={formState.honeypot}
+                onChange={(e) => setFormState({ ...formState, honeypot: e.target.value })}
+                className="hidden"
+                tabIndex={-1}
+                autoComplete="off"
+              />
               <div className="space-y-2">
                 <label
                   htmlFor="name"
