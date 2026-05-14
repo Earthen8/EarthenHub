@@ -139,12 +139,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CORS_ALLOWED_ORIGINS = [
     "https://earthen.my.id",
     "https://www.earthen.my.id",
-    "https://api.earthen.my.id",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://earthen.my.id",
-    "https://api.earthen.my.id"
 ]
 
 CORS_ALLOW_CREDENTIALS = True
