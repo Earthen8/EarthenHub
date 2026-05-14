@@ -119,7 +119,7 @@ export function Navigation() {
 
         <div className="relative z-10 flex items-center justify-between px-4 py-4">
           <span className="font-serif text-lg font-semibold text-foreground">
-            <Image src={EKSlogo} alt="EKS" width={32} height={32} />
+            <Image src={EKSlogo} alt="EKS" width={32} height={32} priority />
           </span>
           <button
             onClick={() => setIsMobileOpen(!isMobileOpen)}
