@@ -1,4 +1,5 @@
-import { Heart } from 'lucide-react'
+import EKSlogo from '../../public/eks-logo-white-transparent.png'
+import Image from 'next/image'
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
@@ -8,10 +9,12 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           {/* Logo */}
-          <div className="flex items-center gap-2">
-            <span className="font-serif text-xl font-semibold text-foreground">
-              EKS
-            </span>
+          <div className="flex items-center justify-center sm:justify-start">
+            <Image 
+              src={EKSlogo} 
+              alt="Earthen Krisdian Setya Logo" 
+              className="h-10 w-auto sm:h-12 object-contain"
+            />
             <span className="text-muted-foreground text-sm">•</span>
             <span className="text-muted-foreground text-sm">
               Earthen Krisdian Setya
