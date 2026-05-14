@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { Home, Grid3X3, Briefcase, Wrench, Mail, Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import EKSlogo from '../../public/eks-logo-white-transparent.png'
+import Image from 'next/image'
 
 const navItems = [
   { label: 'Home', href: '#hero', icon: Home },
@@ -117,7 +119,7 @@ export function Navigation() {
 
         <div className="relative z-10 flex items-center justify-between px-4 py-4">
           <span className="font-serif text-lg font-semibold text-foreground">
-            EKS
+            <Image src={EKSlogo} alt="EKS" width={32} height={32} />
           </span>
           <button
             onClick={() => setIsMobileOpen(!isMobileOpen)}
