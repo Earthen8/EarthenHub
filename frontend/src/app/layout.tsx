@@ -17,14 +17,67 @@ const playfair = Playfair_Display({
 })
 
 export const metadata: Metadata = {
-  title: 'Earthen Krisdian Setya | Full Stack Developer, Designer & Photographer',
-  description: 'Multi-disciplinary professional specializing in full stack development, UI/UX design, and photography. Building digital experiences that blend technology and artistry.',
-  keywords: ['Full Stack Developer', 'UI/UX Designer', 'Photographer', 'Next.js', 'React', 'Django', 'Portfolio'],
-  authors: [{ name: 'Earthen Krisdian Setya' }],
+  metadataBase: new URL('https://earthen.my.id'),
+  title: {
+    default: 'EarthenHub',
+    template: '%s | EarthenHub',
+  },
+  description: 'Earthen Krisdian Setya is a multi-disciplinary professional specializing in full stack development (Flutter, Dart, React, Next.js, Django, Python), UI/UX design, and photography. Explore digital experiences built with artistry and technical excellence.',
+  keywords: [
+    'Full Stack Developer',
+    'UI/UX Designer',
+    'Photographer',
+    'Next.js Developer',
+    'Django Developer',
+    'Flutter Developer',
+    'React Developer',
+    'Dart Developer',
+    'Python Developer',
+    'Earthen Krisdian Setya',
+    'EarthenHub',
+    'Indonesia Web Developer',
+    'Software Engineer',
+    'Software Developer',
+    'Mobile Developer',
+    'Frontend Developer',
+    'Backend Developer',
+    'Web Developer',
+  ],
+  authors: [{ name: 'Earthen Krisdian Setya', url: 'https://earthen.my.id' }],
+  creator: 'Earthen Krisdian Setya',
+  publisher: 'Earthen Krisdian Setya',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
-    title: 'Earthen Krisdian Setya | Full Stack Developer, Designer & Photographer',
+    title: 'EarthenHub',
     description: 'Multi-disciplinary professional specializing in full stack development, UI/UX design, and photography.',
+    url: 'https://earthen.my.id',
+    siteName: 'EarthenHub',
+    locale: 'en_US',
     type: 'website',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'EarthenHub Portfolio Overview',
+      },
+    ],
+  },
+  verification: {
+    google: 'your-google-verification-code', // Replace this later
   },
 }
 

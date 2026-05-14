@@ -59,7 +59,7 @@ export async function sendEmail(formData: FormData): Promise<ActionResponse> {
           <p><strong>Message:</strong></p>
           <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; white-space: pre-wrap;">${message}</div>
           <footer style="margin-top: 20px; font-size: 12px; color: #94a3b8; text-align: center;">
-            This email was sent from the contact form on earthenhub.my.id
+            This email was sent from the contact form on earthen.my.id
           </footer>
         </div>
       `,
