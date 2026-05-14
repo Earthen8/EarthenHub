@@ -12,89 +12,7 @@ interface TimelineItem {
   type: 'education' | 'work' | 'achievement' | 'project'
 }
 
-const timelineData: TimelineItem[] = [
-  // year, title, organization, description, type
-  // work, achievement, project, education
-
-  {
-    year: 'Present',
-    title: 'Undergraduate Software Engineering Student',
-    organization: 'Universitas Prasetiya Mulya',
-    description: 'Studying software engineering with a focus on systems architecture and full-stack development.',
-    type: 'education',
-  },
-  {
-    year: 'May 2026',
-    title: 'Full Stack Developer',
-    organization: 'SwiftTrip',
-    description: 'Developing an AI-powered travel-tech application, leading the development from UI design to deployment.',
-    type: 'project',
-  },
-  {
-    year: 'Apr 2026',
-    title: 'Head of Secretariat',
-    organization: 'SISO Prasmul',
-    description: 'Detail-oriented leadership position essential for maintaining the organization\'s structural integrity and operational efficiency.',
-    type: 'work',
-  },
-  {
-    year: 'Oct 2025',
-    title: 'Roblox 3D Modeler',
-    organization: 'Prasetiya Mulya Virtual Campus',
-    description: 'Developed a digital twin virtual campus environment that accumulated over 1,200 visits.',
-    type: 'project',
-  },
-  {
-    year: 'Sep 2025',
-    title: 'Certified Associate',
-    organization: 'Oracle Cloud',
-    description: 'Earned the Oracle Cloud AI Foundations Associate 2025 certification.',
-    type: 'education',
-  },
-  {
-    year: 'Aug 2025',
-    title: 'Documentation Coordinator',
-    organization: 'ICN 2026',
-    description: 'Architecting the end-to-end documentation strategy for ICN 2026, ensuring all institutional knowledge, media assets, and project milestones are captured and categorized.',
-    type: 'work',
-  },
-  {
-    year: 'Jul 2025',
-    title: 'Secretary',
-    organization: 'P3rspective 2025/2026',
-    description: 'Directing the administrative framework for P3rspective 2025/2026, ensuring seamless coordination between the Executive Board (BPH) and various divisions.',
-    type: 'work',
-  },
-  {
-    year: 'Jun 2025',
-    title: '6th Place Global Finalist',
-    organization: 'HackFest 2025 UI/UX International Competition',
-    description: 'Designed and presented CarbonMate, an AI-powered carbon tracking application.',
-    type: 'achievement',
-  },
-  {
-    year: 'May 2025',
-    title: 'Owner & Operator',
-    organization: 'TemanRasa',
-    description: 'Successfully scaled a highly rated e-commerce store to generate over 35 million IDR in revenue by leveraging data-driven market analysis, optimizing inventory, and maintaining exceptional operational efficiency and customer service standards.',
-    type: 'work',
-  },
-  {
-    year: 'Apr 2025',
-    title: 'UI/UX Designer',
-    organization: 'Universitas Prasetiya Mulya',
-    description: 'Designed the user interface and experience for Wastella, a gamified eco-conscious mobile app using Figma.',
-    type: 'project',
-  },
-  {
-    year: 'Aug 2024',
-    title: 'Lead Documentation Specialist',
-    organization: 'SISO Prasmul',
-    description: 'Managed end-to-end documentation workflows for five major institutional events, ensuring 100% capture of key milestones and media assets.',
-    type: 'work',
-  },
-]
-
+// Data comes from API
 /** Number of items visible before "See More" is shown */
 const INITIAL_VISIBLE_COUNT = 5
 
@@ -291,7 +209,8 @@ function TimelineItem({
 // ---------------------------------------------------------------------------
 // TimelineSection — main export, unchanged public API + new expand mechanism
 // ---------------------------------------------------------------------------
-export function TimelineSection() {
+export function TimelineSection({ experiences }: { experiences: TimelineItem[] }) {
+  const timelineData = experiences || []
   const totalItems = timelineData.length
   const [visibleItems, setVisibleItems] = useState<boolean[]>(
     new Array(totalItems).fill(false)

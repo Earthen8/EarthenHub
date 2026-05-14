@@ -7,15 +7,43 @@ import { ToolsSection } from '@/components/tools-section'
 import { ContactSection } from '@/components/contact-section'
 import { Footer } from '@/components/footer'
 
-export default function Home() {
+import {
+  getDisciplines,
+  getFeaturedProjects,
+  getExperiences,
+  getTools,
+  getPhilosophy
+} from '@/lib/api'
+
+export default async function Home() {
+  // Fetch all data in parallel for optimal initial load speed
+  const [
+    disciplines,
+    projects,
+    experiences,
+    tools,
+    philosophy
+  ] = await Promise.all([
+    getDisciplines(),
+    getFeaturedProjects(),
+    getExperiences(),
+    getTools(),
+    getPhilosophy()
+  ]);
+
   return (
     <main className="relative min-h-screen">
       <Navigation />
       <HeroSection />
-      <AboutSection />
-      <SkillList />
-      <TimelineSection />
-      <ToolsSection />
+      {/* 
+        Pass fetched data as props to the client components.
+        This ensures SEO and fast initial rendering while keeping 
+        interactivity intact.
+      */}
+      <AboutSection philosophy={philosophy} />
+      <SkillList disciplines={disciplines} projects={projects} />
+      <TimelineSection experiences={experiences} />
+      <ToolsSection tools={tools} />
       <ContactSection />
       <Footer />
     </main>

@@ -4,9 +4,26 @@ import { useEffect, useRef, useState } from 'react'
 import { Code2, Zap, Grid3X3 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-export function AboutSection() {
+import { getIcon } from '@/lib/icon-map'
+
+export function AboutSection({ philosophy }: { philosophy: any }) {
   const [isVisible, setIsVisible] = useState(false)
+  const [activeTrait, setActiveTrait] = useState<number | null>(null)
   const sectionRef = useRef<HTMLDivElement>(null)
+  
+  const isHovering = activeTrait !== null
+
+  // Fallbacks if data is missing
+  const defaultText = "I am a systems builder who finds clarity in structure and intentional architecture. I view my work as a digital garden where technical integrity and long term value grow together. My focus is on creating software that is not just functional but structurally sound and built to endure.\n\nBy combining systems architecture with procedural logic, I bridge the gap between technical execution and business goals. Whether I am solving complex data problems or mentoring others my mission is to transform difficult challenges into elegant solutions. I believe the best digital tools are those that are robust in their foundation and intuitive to use."
+  const philosophyText = philosophy?.philosophyText || defaultText
+  const paragraphs = philosophyText.split('\n\n')
+  
+  const defaultTraits = [
+    { title: 'System Architect', description: 'Designing scalable, maintainable systems with programming excellence', icon: 'Grid3X3' },
+    { title: 'Full Stack Developer', description: 'Specialized in end-to-end development and modern architectures', icon: 'Code2' },
+    { title: 'INTJ Personality', description: 'Strategic thinker who finds clarity in structure and systems', icon: 'Zap' },
+  ]
+  const traits = philosophy?.traits?.length ? philosophy.traits : defaultTraits
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -24,24 +41,6 @@ export function AboutSection() {
 
     return () => observer.disconnect()
   }, [])
-
-  const traits = [
-    {
-      icon: Grid3X3,
-      title: 'System Architect',
-      description: 'Designing scalable, maintainable systems with programming excellence',
-    },
-    {
-      icon: Code2,
-      title: 'Full Stack Developer',
-      description: 'Specialized in end-to-end development and modern architectures',
-    },
-    {
-      icon: Zap,
-      title: 'INTJ Personality',
-      description: 'Strategic thinker who finds clarity in structure and systems',
-    },
-  ]
 
   return (
     <section
@@ -75,24 +74,27 @@ export function AboutSection() {
                 Clarity Through
                 <span className="block text-accent">Structure</span>
               </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                I&apos;m an INTJ who thrives when systems make sense and architecture is intentional. Every line of code, every design decision, and every system I build reflects a deep commitment to clarity and excellence.
-              </p>
             </div>
 
             {/* Core Traits */}
             <div className="space-y-4 pt-4">
-              {traits.map((trait, index) => {
-                const Icon = trait.icon
+              {traits.map((trait: any, idx: number) => {
+                const Icon = getIcon(trait.icon) || Grid3X3
+                const isActive = activeTrait === idx
+                const isFaded = isHovering && !isActive
+                
                 return (
                   <div
                     key={trait.title}
+                    onMouseEnter={() => setActiveTrait(idx)}
+                    onMouseLeave={() => setActiveTrait(null)}
                     className={cn(
                       'glass p-4 rounded-lg border border-secondary/30',
                       'transition-all duration-700 hover:border-accent/50 hover:bg-secondary/30 group',
-                      isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+                      isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4',
+                      isFaded && 'opacity-50 scale-95 blur-[0.5px]'
                     )}
-                    style={{ transitionDelay: `${index * 150}ms` }}
+                    style={{ transitionDelay: `${idx * 150}ms` }}
                   >
                     <div className="flex items-start gap-4">
                       <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
@@ -100,7 +102,9 @@ export function AboutSection() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="font-semibold text-foreground text-sm">{trait.title}</h3>
-                        <p className="text-sm text-muted-foreground mt-1">{trait.description}</p>
+                        <p className="text-muted-foreground text-sm font-light leading-relaxed">
+                          {trait.description || trait.desc}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -127,17 +131,10 @@ export function AboutSection() {
                 My Philosophy
               </h3>
 
-              <div className="space-y-4 text-muted-foreground leading-relaxed">
-                <p>
-                  I am a systems builder who finds clarity in structure and intentional architecture. 
-                  I view my work as a digital garden where technical integrity and long term value grow together. 
-                  My focus is on creating software that is not just functional but structurally sound and built to endure.
-                </p>
-                <p>
-                  By combining systems architecture with procedural logic, I bridge the gap between technical execution and business goals. 
-                  Whether I am solving complex data problems or mentoring others my mission is to transform difficult challenges into elegant solutions. 
-                  I believe the best digital tools are those that are robust in their foundation and intuitive to use.
-                </p>
+              <div className="space-y-4 text-muted-foreground/90 font-light leading-relaxed text-sm sm:text-base">
+                {paragraphs.map((para: string, idx: number) => (
+                  <p key={idx}>{para}</p>
+                ))}
               </div>
 
               {/* Decorative Corner */}

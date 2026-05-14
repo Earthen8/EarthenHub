@@ -13,7 +13,7 @@ import {
   Loader2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { sendEmail } from '@/app/actions'
+import { submitInquiry } from '@/lib/api'
 
 const socialLinks = [
   {
@@ -56,13 +56,16 @@ export function ContactSection() {
     formData.append('message', formState.message)
     formData.append('honeypot', formState.honeypot)
 
-    const result = await sendEmail(formData)
-
-    if (result.success) {
+    try {
+      await submitInquiry({
+        name: formState.name,
+        email: formState.email,
+        message: formState.message,
+      })
       setIsSubmitted(true)
       setFormState({ name: '', email: '', message: '', honeypot: '' })
-    } else {
-      alert(result.error || "Failed to send email. Check console for details.")
+    } catch (error: any) {
+      alert(error.message || "Failed to send message. Please try again.")
     }
 
     setIsSubmitting(false)

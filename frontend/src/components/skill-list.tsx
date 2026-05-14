@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Camera, Palette, BarChart3, Code2, Aperture, Layers, Blocks, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { getIcon } from '@/lib/icon-map'
 import { FeaturedProjects } from './featured-projects'
 
 /* ─── Types ──────────────────────────────────────────────────── */
@@ -17,60 +18,7 @@ interface Skill {
   accentColor: string
 }
 
-/* ─── Data ───────────────────────────────────────────────────── */
-
-const skills: Skill[] = [
-  {
-    id: 'engineering',
-    index: '01',
-    label: 'Full-Stack Development',
-    icon: Code2,
-    description:
-      'Building resilient and scalable web and mobile applications with a focus on optimized backend performance and clean API integration.',
-    stack: ['Flutter', 'Dart', 'Django', 'REST Framework', 'React', 'Next.js', 'Node.js'],
-    accentColor: '#6ee7b7',
-  },
-  {
-    id: 'systems',
-    index: '02',
-    label: 'Systems Architecture',
-    icon: Layers,
-    description:
-      'Designing structural blueprints for software infrastructure and implementing data pipelines to ensure operational excellence.',
-    stack: ['Python', 'PostgreSQL', 'API Integration', 'Docker', 'Ubuntu Linux'],
-    accentColor: '#fef08a',
-  },
-  {
-    id: 'modelling',
-    index: '03',
-    label: '3D Environmental Modeling',
-    icon: Blocks,
-    description:
-      'Creating immersive virtual environments and digital twins that bridge physical constraints with digital capabilities.',
-    stack: ['Roblox Studio', '3D Modeling', 'Spatial Design', 'Virtual Environments'],
-    accentColor: '#ff7300ff',
-  },
-  {
-    id: 'photography',
-    index: '04',
-    label: 'Photography',
-    icon: Camera,
-    description:
-      'Documenting light, people, and quiet moments. Shooting primarily with Canon R100 + RF 18-45mm — 2000+ frames and counting.',
-    stack: ['Canon R100', 'Lightroom', 'Astrophotography', 'Portrait', 'Architecture'],
-    accentColor: '#38bdf8',
-  },
-  {
-    id: 'mentorship',
-    index: '05',
-    label: 'Technical Mentorship',
-    icon: Users,
-    description:
-      'Guiding organizational leadership, managing project documentation, and mentoring peers in software engineering practices.',
-    stack: ['Project Management', 'Agile Development', 'Technical Documentation', 'Leadership'],
-    accentColor: '#c084fc',
-  },
-]
+// Data comes from API
 
 /* ─── Skill Row ──────────────────────────────────────────────── */
 
@@ -81,7 +29,7 @@ function SkillRow({ skill, isActive, onEnter, onLeave, onClick }: {
   onLeave: () => void
   onClick: () => void
 }) {
-  const Icon = skill.icon
+  const Icon = getIcon(skill.icon as unknown as string)
 
   return (
     <div
@@ -193,8 +141,10 @@ function SkillRow({ skill, isActive, onEnter, onLeave, onClick }: {
 
 /* ─── SkillList ─────────────────────────────── */
 
-export function SkillList() {
+export function SkillList({ disciplines = [], projects = [] }: { disciplines: any[], projects: any[] }) {
   const [activeId, setActiveId] = useState<string | null>(null)
+  
+  const skills = disciplines.length ? disciplines : []
 
   return (
     <section id="worlds" className="py-16 lg:py-28">
@@ -241,7 +191,7 @@ export function SkillList() {
             </p>
             <div className="flex-1 h-px bg-white/[0.06]" />
           </div>
-          <FeaturedProjects />
+          <FeaturedProjects projects={projects} />
         </div>
 
         {/* ── Divider ────────────────────────────────────────────── */}

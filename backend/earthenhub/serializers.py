@@ -69,12 +69,11 @@ class PhilosophyTraitSerializer(serializers.ModelSerializer):
 
 class PhilosophySerializer(serializers.ModelSerializer):
     traits = PhilosophyTraitSerializer(many=True, read_only=True)
-    professionalTitles = serializers.CharField(source='professional_titles', default="Developer")
     philosophyText = serializers.CharField(source='philosophy_text', default="")
     
     class Meta:
         model = Philosophy
-        fields = ['id', 'name', 'professionalTitles', 'philosophyText', 'traits']
+        fields = ['id', 'name', 'philosophyText', 'traits']
 
 class InquirySerializer(serializers.ModelSerializer):
     class Meta:

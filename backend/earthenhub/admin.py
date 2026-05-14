@@ -38,7 +38,7 @@ class PhilosophyTraitInline(admin.TabularInline):
 
 @admin.register(Philosophy)
 class PhilosophyAdmin(admin.ModelAdmin):
-    list_display = ('name', 'professional_titles')
+    list_display = ('name',)
     inlines = [PhilosophyTraitInline]
 
 @admin.register(Inquiry)

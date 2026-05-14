@@ -1,0 +1,58 @@
+import {
+  Code2,
+  Layers,
+  Blocks,
+  Camera,
+  Users,
+  Smartphone,
+  Terminal,
+  Sparkles,
+  Atom,
+  Github,
+  Container,
+  HardDrive,
+  Database,
+  Network,
+  Figma,
+  Gamepad2,
+  Box,
+  Laptop,
+  GraduationCap,
+  Briefcase,
+  Award,
+  Rocket,
+  Zap,
+  Grid3X3,
+  Circle
+} from 'lucide-react';
+
+export const IconMap: Record<string, React.ElementType> = {
+  Code2,
+  Layers,
+  Blocks,
+  Camera,
+  Users,
+  Smartphone,
+  Terminal,
+  Sparkles,
+  Atom,
+  Github,
+  Container,
+  HardDrive,
+  Database,
+  Network,
+  Figma,
+  Gamepad2,
+  Box,
+  Laptop,
+  GraduationCap,
+  Briefcase,
+  Award,
+  Rocket,
+  Zap,
+  Grid3X3,
+};
+
+export function getIcon(name: string): React.ElementType {
+  return IconMap[name] || Circle; // Default fallback icon
+}

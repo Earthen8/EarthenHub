@@ -15,32 +15,7 @@ interface ProjectDetails {
   imageUrl?: string
 }
 
-const projects: ProjectDetails[] = [
-  {
-    title: 'E-Commerce Platform',
-    tag: 'Full-Stack',
-    problem: 'Needed a scalable platform to handle 10K+ daily users with complex product filtering and real-time inventory.',
-    solution: 'Built full-stack with Next.js, Django backend, and PostgreSQL. Implemented Redis caching for 60% faster load times.',
-    techStack: ['Next.js', 'Django', 'PostgreSQL', 'Redis', 'Docker'],
-    outcome: ['99.9% uptime', '300ms avg response', '60% faster loads'],
-  },
-  {
-    title: 'Real-time Analytics',
-    tag: 'Data Viz',
-    problem: 'Client needed live visualization for 50+ metrics across multiple data sources without overwhelming UX.',
-    solution: 'TypeScript + React with WebSockets and time-series database. Smart caching and data aggregation pipeline.',
-    techStack: ['React', 'TypeScript', 'WebSockets', 'Node.js', 'InfluxDB'],
-    outcome: ['Sub-second updates', '95% faster insights', '50+ metrics'],
-  },
-  {
-    title: 'Microservices Migration',
-    tag: 'DevOps',
-    problem: 'Legacy monolithic app caused deployment bottlenecks and scaling issues across 20+ engineers.',
-    solution: 'Architected microservices with Docker and Kubernetes. Implemented API Gateway, message queues, and monitoring.',
-    techStack: ['Docker', 'Kubernetes', 'Node.js', 'PostgreSQL', 'RabbitMQ'],
-    outcome: ['70% faster deploys', '5x scalability', '20+ services'],
-  },
-]
+// Data comes from API
 
 /* ── Project image panel ─────────────────────────────────────────
    Renders the backend-supplied imageUrl when available.
@@ -68,18 +43,23 @@ function ProjectImage({ imageUrl, title }: { imageUrl?: string; title: string })
   )
 }
 
-export function FeaturedProjects() {
-  const [active, setActive] = useState(0)
-  const project = projects[active]
+export function FeaturedProjects({ projects: apiProjects }: { projects?: ProjectDetails[] }) {
+  const [active, setActive] = useState<number>(0)
+  
+  const projectsList = apiProjects && apiProjects.length > 0 ? apiProjects : []
+  
+  if (projectsList.length === 0) {
+    return null; // Don't render if no projects
+  }
+  const project = projectsList[active]
 
   return (
     /* Fixed-height panel: no page scroll as project count grows */
-    <div className="glass rounded-2xl border border-secondary/50 overflow-hidden">
-      <div className="flex flex-col md:flex-row h-auto md:h-[420px]">
+    <div className="glass border border-secondary/40 rounded-xl overflow-hidden flex flex-col md:flex-row h-[500px] md:h-[400px]">
 
         {/* Tab list — vertical on md+, horizontal scroll on mobile */}
         <div className="flex md:flex-col border-b md:border-b-0 md:border-r border-secondary/40 overflow-x-auto md:overflow-x-visible md:overflow-y-auto md:w-52 shrink-0">
-          {projects.map((p, i) => (
+          {projectsList.map((p, i) => (
             <button
               key={i}
               onClick={() => setActive(i)}
@@ -159,6 +139,5 @@ export function FeaturedProjects() {
           </div>
         </div>
       </div>
-    </div>
   )
 }

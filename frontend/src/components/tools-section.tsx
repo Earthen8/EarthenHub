@@ -31,133 +31,11 @@ interface ToolItem {
   icon: React.ElementType
   description: string
   proficiency?: 'Beginner' | 'Intermediate' | 'Advanced'
+  specifications?: string
 }
 
-const toolsData: ToolItem[] = [
-  // Development
-  {
-    name: 'Flutter & Dart',
-    category: 'dev',
-    icon: Smartphone,
-    description: 'Building custom procedural animations and cross-platform mobile applications.',
-    proficiency: 'Advanced',
-  },
-  {
-    name: 'Python & Django',
-    category: 'dev',
-    icon: Terminal,
-    description: 'Architecting scalable backend systems and REST API integrations.',
-    proficiency: 'Advanced',
-  },
-  {
-    name: 'Google Antigravity',
-    category: 'dev',
-    icon: Sparkles,
-    description: 'AI-Assisted Programming and Development.',
-    proficiency: 'Advanced',
-  },
-  {
-    name: 'Cursor IDE',
-    category: 'dev',
-    icon: Code2,
-    description: 'AI-Assisted Programming and Development.',
-    proficiency: 'Advanced',
-  },
-  {
-    name: 'React & Vite',
-    category: 'dev',
-    icon: Atom,
-    description: 'Building modern web applications with cutting-edge web technologies.',
-    proficiency: 'Intermediate',
-  },
-  {
-    name: 'Android Studio',
-    category: 'dev',
-    icon: Smartphone,
-    description: 'Building native Android applications.',
-  },
-  // Infrastructure
-  {
-    name: 'Github',
-    category: 'infra',
-    icon: Github,
-    description: 'Version control and code collaboration',
-    proficiency: 'Advanced',
-  },
-  {
-    name: 'Docker',
-    category: 'infra',
-    icon: Container,
-    description: 'Containerizing applications for consistent deployment workflows',
-    proficiency: 'Intermediate',
-  },
-  {
-    name: 'Ubuntu Linux',
-    category: 'infra',
-    icon: HardDrive,
-    description: 'Managing server environments and deployments',
-    proficiency: 'Intermediate',
-  },
-  {
-    name: 'PostgreSQL',
-    category: 'infra',
-    icon: Database,
-    description: 'Managing structured relational database systems',
-  },
-  {
-    name: 'MariaDB',
-    category: 'infra',
-    icon: Database,
-    description: 'Relational database management system',
-  },
-  {
-    name: 'Tailscale',
-    category: 'infra',
-    icon: Network,
-    description: 'Secure personal networking for remote access',
-  },
-  // Design
-  {
-    name: 'Figma',
-    category: 'design',
-    icon: Figma,
-    description: 'Prototyping UI/UX flows & prototyping',
-    proficiency: 'Advanced',
-  },
-  {
-    name: 'Roblox Studio',
-    category: 'design',
-    icon: Gamepad2,
-    description: '3D environment and game development for Roblox platform.',
-    proficiency: 'Intermediate',
-  },
-  {
-    name: 'SketchUp',
-    category: 'design',
-    icon: Box,
-    description: '3D modeling for product and environment design.',
-    proficiency: 'Intermediate',
-  },
-  // Hardware
-  {
-    name: 'ASUS Zenbook 14 OLED',
-    category: 'hardware',
-    icon: Laptop,
-    description: 'Ryzen 7 8840HS • 16GB RAM',
-  },
-  {
-    name: 'Canon R100',
-    category: 'hardware',
-    icon: Camera,
-    description: 'RF-S18-45mm F4.5-6.3 IS STM',
-  },
-  {
-    name: 'Lenovo IdeaPad S340-14API',
-    category: 'hardware',
-    icon: Laptop,
-    description: 'Ryzen 3 3200U • 8GB RAM',
-  },
-]
+// Data comes from API
+import { getIcon } from '@/lib/icon-map'
 
 const categories = [
   { key: 'all', label: 'All Tools' },
@@ -197,7 +75,7 @@ function useBreakpointThreshold() {
 
 function ToolCard({ item }: { item: ToolItem }) {
   const [isHovered, setIsHovered] = useState(false)
-  const Icon = item.icon
+  const Icon = getIcon(item.icon as unknown as string)
 
   const getProficiencyColor = (level?: string) => {
     switch (level) {
@@ -248,7 +126,10 @@ function ToolCard({ item }: { item: ToolItem }) {
 
         <div className="flex-1">
           <h3 className="font-semibold text-foreground text-sm leading-tight">{item.name}</h3>
-          <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">{item.description}</p>
+          <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">
+            {item.description}
+            {item.specifications && <span className="block mt-1 opacity-70">{item.specifications}</span>}
+          </p>
         </div>
       </div>
 
@@ -263,11 +144,13 @@ function ToolCard({ item }: { item: ToolItem }) {
   )
 }
 
-export function ToolsSection() {
+export function ToolsSection({ tools }: { tools: ToolItem[] }) {
   const [activeCategory, setActiveCategory] = useState('all')
   const [isExpanded, setIsExpanded] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
   const threshold = useBreakpointThreshold()
+  
+  const toolsData = tools || []
 
   const filteredTools =
     activeCategory === 'all'

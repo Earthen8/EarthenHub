@@ -100,7 +100,6 @@ class Tool(models.Model):
 class Philosophy(models.Model):
     """About Me singleton."""
     name = models.CharField(max_length=100, default="Earthen")
-    professional_titles = models.CharField(max_length=200, help_text="Comma-separated titles")
     philosophy_text = models.TextField()
 
     class Meta:
