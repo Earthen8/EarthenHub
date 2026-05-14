@@ -37,13 +37,11 @@ export function HeroSection() {
     const currentFull = taglines[taglineIndex]
 
     if (!isDeleting && displayedText === currentFull) {
-      // Full text shown — pause 2s then start deleting
       const pause = setTimeout(() => setIsDeleting(true), 2000)
       return () => clearTimeout(pause)
     }
 
     if (isDeleting && displayedText === '') {
-      // Fully deleted — move to next tagline
       setIsDeleting(false)
       setTaglineIndex((prev) => (prev + 1) % taglines.length)
       return
@@ -183,7 +181,7 @@ export function HeroSection() {
               <div className="relative h-full glass rounded-3xl overflow-hidden group">
                 {/* Image with Protection */}
                 <Image
-                  src="/earthen-mask.png"
+                  src="/earthen-pixar.jpg"
                   alt="Earthen Krisdian Setya"
                   fill
                   sizes="(max-width: 768px) 100vw, 448px"
