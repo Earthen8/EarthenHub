@@ -237,7 +237,7 @@ export function SkillList() {
         <div className="mb-12 sm:mb-16">
           <div className="flex items-baseline gap-3 mb-5">
             <p className="font-mono text-[11px] tracking-[0.25em] text-white/30 uppercase">
-              Featured Projects
+              Case studies
             </p>
             <div className="flex-1 h-px bg-white/[0.06]" />
           </div>
