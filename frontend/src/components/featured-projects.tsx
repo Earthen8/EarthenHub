@@ -154,7 +154,7 @@ export function FeaturedProjects() {
           </div>
 
           {/* Right: project image — wired to backend via imageUrl */}
-          <div className="hidden sm:flex md:w-72 lg:w-80 shrink-0 bg-secondary/10 border-t md:border-t-0 md:border-l border-secondary/30 overflow-hidden">
+          <div className="hidden md:flex aspect-square h-full shrink-0 bg-secondary/10 border-l border-secondary/30 overflow-hidden">
             <ProjectImage imageUrl={project.imageUrl} title={project.title} />
           </div>
         </div>
