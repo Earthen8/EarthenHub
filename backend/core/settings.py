@@ -136,7 +136,18 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "https://earthen.my.id",
+    "https://www.earthen.my.id",
+    "https://api.earthen.my.id",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://earthen.my.id",
+    "https://api.earthen.my.id"
+]
+
+CORS_ALLOW_CREDENTIALS = True
 
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'earthenhub.exceptions.global_exception_handler',
