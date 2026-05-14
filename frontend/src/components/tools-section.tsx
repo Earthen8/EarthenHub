@@ -30,7 +30,7 @@ interface ToolItem {
   category: 'dev' | 'infra' | 'design' | 'hardware'
   icon: React.ElementType
   description: string
-  proficiency?: 'Beginner' | 'Intermediate' | 'Advanced'
+  proficiency?: 'Intermediate' | 'Advanced'
   specifications?: string
 }
 
@@ -82,9 +82,7 @@ function ToolCard({ item }: { item: ToolItem }) {
       case 'Advanced':
         return 'bg-accent/20 text-accent border border-accent/30'
       case 'Intermediate':
-        return 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-      case 'Beginner':
-        return 'bg-slate-500/20 text-slate-400 border border-slate-500/30'
+        return 'bg-chart-3/20 text-chart-3 border border-chart-3/30'
       default:
         return ''
     }

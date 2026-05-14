@@ -73,7 +73,6 @@ class Tool(models.Model):
     ]
     
     PROFICIENCY_CHOICES = [
-        ('Beginner', 'Beginner'),
         ('Intermediate', 'Intermediate'),
         ('Advanced', 'Advanced'),
     ]
