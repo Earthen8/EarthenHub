@@ -32,7 +32,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-03i2d%s7kl+$k+2^579c74dxph
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'earthen.my.id,backend,localhost,100.107.249.94,100.74.191.109').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'earthen.my.id,backend,localhost,127.0.0.1,100.107.249.94,100.74.191.109').split(',')
 
 
 # Application definition
