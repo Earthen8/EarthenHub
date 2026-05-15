@@ -1,4 +1,10 @@
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api';
+// Detect if code is running on server or client
+const IS_SERVER = typeof window === 'undefined';
+
+// Server uses Docker DNS, Browser uses Public URL
+export const API_BASE_URL = IS_SERVER 
+  ? 'http://backend:8000/core' 
+  : (process.env.NEXT_PUBLIC_API_URL || 'https://earthen.my.id/core');
 
 /**
  * Universal fetcher with error handling and Next.js ISR/cache support.
