@@ -3,8 +3,8 @@ const IS_SERVER = typeof window === 'undefined';
 
 // Server uses Docker DNS, Browser uses Public URL
 export const API_BASE_URL = IS_SERVER 
-  ? 'http://backend:8000/core' 
-  : (process.env.NEXT_PUBLIC_API_URL || 'https://earthen.my.id/core');
+  ? 'http://backend:8000/api' 
+  : (process.env.NEXT_PUBLIC_API_URL || 'https://earthen.my.id/api');
 
 /**
  * Universal fetcher with error handling and Next.js ISR/cache support.
