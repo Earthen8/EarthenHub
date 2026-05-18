@@ -81,6 +81,15 @@ export async function getPhilosophy() {
   }
 }
 
+export async function getCertifications() {
+  try {
+    return await fetchAPI<any[]>('/certifications/');
+  } catch (e) {
+    return [];
+  }
+}
+
+
 // Client-side POST function
 export async function submitInquiry(data: { name: string; email: string; message: string }) {
   const response = await fetch(`${API_BASE_URL}/inquiries/`, {

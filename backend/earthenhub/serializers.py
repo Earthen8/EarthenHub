@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Discipline, Project, Experience, Tool, Philosophy, PhilosophyTrait, Inquiry
+from .models import Discipline, Project, Experience, Tool, Philosophy, PhilosophyTrait, Inquiry, Certification
 
 class DisciplineSerializer(serializers.ModelSerializer):
     id = serializers.CharField(source='slug')
@@ -85,3 +85,20 @@ class InquirySerializer(serializers.ModelSerializer):
         if not value:
             raise serializers.ValidationError("Email is required.")
         return value
+
+
+class CertificationSerializer(serializers.ModelSerializer):
+    id = serializers.CharField(source='slug')
+    imageUrl = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Certification
+        fields = ['id', 'title', 'imageUrl', 'sort_order']
+
+    def get_imageUrl(self, obj):
+        if obj.image:
+            return obj.image.url
+        if obj.image_url:
+            return obj.image_url
+        return None
+

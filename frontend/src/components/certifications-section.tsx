@@ -1,7 +1,7 @@
 'use client'
 
 /**
- * CertificationsSection
+ * CertificationsSection — Accordion Slider with A4 Lightbox Viewer
  *
  * Backend integration guide:
  * ---------------------------
@@ -11,249 +11,172 @@
  * Fields:
  *   id            — unique string key
  *   title         — certification name
- *   issuer        — issuing organization
- *   date          — human-readable issue date
- *   category      — 'professional' | 'technology' | 'design'
- *   credentialId  — (optional) credential ID string shown on hover
- *   credentialUrl — (optional) external verification URL
- *   imageUrl      — (optional) issuer logo or badge image
- *                   If omitted, the emoji `icon` field is used as fallback.
- *   icon          — emoji fallback when imageUrl is absent
+ *   imageUrl      — certificate/badge image URL (shown in card + A4 lightbox viewer)
  *
  * Example API swap (Next.js server component pattern):
  *   const certifications = await fetch('/api/certifications').then(r => r.json())
  *   Pass the result as a prop: <CertificationsSection certifications={certifications} />
  */
 
-import { useEffect, useRef, useState } from 'react'
-import { Award, ExternalLink, ShieldCheck } from 'lucide-react'
+import { useEffect, useRef, useState, useCallback } from 'react'
+import { Award } from 'lucide-react'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-
-type CertCategory = 'professional' | 'technology' | 'design'
 
 export interface Certification {
   id: string
   title: string
-  issuer: string
-  date: string
-  category: CertCategory
-  credentialId?: string
-  credentialUrl?: string
-  /** URL to an issuer logo or badge image. Falls back to `icon` if absent. */
+  /** URL to the certificate image (shown in card thumbnail and A4 lightbox). */
   imageUrl?: string
-  /** Emoji fallback when imageUrl is not provided. */
-  icon: string
 }
 
 // ─── Static data (replace with API data when backend is ready) ────────────────
 
 const CERTIFICATIONS: Certification[] = [
-  {
-    id: 'aws-solutions-architect',
-    title: 'AWS Certified Solutions Architect',
-    issuer: 'Amazon Web Services',
-    date: 'Issued Mar 2024',
-    category: 'professional',
-    credentialId: 'AWS-SA-20240315',
-    credentialUrl: 'https://aws.amazon.com/certification',
-    icon: '☁️',
-  },
-  {
-    id: 'google-cloud-architect',
-    title: 'Google Cloud Architect',
-    issuer: 'Google Cloud',
-    date: 'Issued Feb 2024',
-    category: 'professional',
-    credentialId: 'GCA-20240210',
-    credentialUrl: 'https://cloud.google.com/certification',
-    icon: '🔵',
-  },
-  {
-    id: 'ux-design-cert',
-    title: 'Advanced UX/UI Design',
-    issuer: 'Interaction Design Foundation',
-    date: 'Issued Jan 2024',
-    category: 'design',
-    credentialId: 'IDF-UX-2024',
-    credentialUrl: 'https://www.interaction-design.org',
-    icon: '🎨',
-  },
-  {
-    id: 'typescript-advanced',
-    title: 'TypeScript Advanced Patterns',
-    issuer: 'Total TypeScript',
-    date: 'Issued Dec 2023',
-    category: 'technology',
-    credentialId: 'TT-2023-1215',
-    credentialUrl: 'https://totaltypescript.com',
-    icon: '📘',
-  },
-  {
-    id: 'react-patterns',
-    title: 'React Design Patterns Mastery',
-    issuer: 'egghead.io',
-    date: 'Issued Nov 2023',
-    category: 'technology',
-    credentialId: 'EGG-REACT-2023',
-    credentialUrl: 'https://egghead.io',
-    icon: '⚛️',
-  },
-  {
-    id: 'system-design',
-    title: 'System Design for Scale',
-    issuer: 'ByteByteGo',
-    date: 'Issued Oct 2023',
-    category: 'professional',
-    credentialId: 'BBG-SYS-2023',
-    credentialUrl: 'https://bytebytego.com',
-    icon: '🏗️',
-  },
+  { id: 'aws-solutions-architect', title: 'AWS Certified Solutions Architect' },
+  { id: 'google-cloud-architect', title: 'Google Cloud Professional Architect' },
+  { id: 'ux-design-cert', title: 'Advanced UX/UI Design' },
+  { id: 'typescript-advanced', title: 'TypeScript Advanced Patterns' },
+  { id: 'react-specialist', title: 'React Developer Specialist' },
+  { id: 'docker-certified', title: 'Docker Certified Associate' },
 ]
 
-// ─── Category config ──────────────────────────────────────────────────────────
+// ─── Colour palette per card (cycles) ────────────────────────────────────────
 
-const CATEGORY_STYLES: Record<CertCategory, { label: string; className: string }> = {
-  professional: {
-    label: 'Professional',
-    className: 'cert-badge cert-badge--professional',
-  },
-  design: {
-    label: 'Design',
-    className: 'cert-badge cert-badge--design',
-  },
-  technology: {
-    label: 'Technology',
-    className: 'cert-badge cert-badge--technology',
-  },
+const CARD_PALETTES = [
+  { bg: '#0f172a', accent: '#38bdf8', text: '#e0f2fe' },
+  { bg: '#1a0a2e', accent: '#a78bfa', text: '#ede9fe' },
+  { bg: '#0a1a0f', accent: '#4ade80', text: '#dcfce7' },
+  { bg: '#1a0f0a', accent: '#fb923c', text: '#ffedd5' },
+  { bg: '#0a1020', accent: '#60a5fa', text: '#dbeafe' },
+  { bg: '#1a0a14', accent: '#f472b6', text: '#fce7f3' },
+]
+
+// ─── A4 Lightbox ──────────────────────────────────────────────────────────────
+
+interface LightboxProps {
+  certifications: Certification[]
+  activeIndex: number
+  onClose: () => void
+  onNavigate: (index: number) => void
 }
 
-// ─── Parallax depth per card index (subtle, not distracting) ─────────────────
-//   Cards alternate between 3 depth layers. Adjust multipliers to taste.
-const DEPTH_LAYER = [0.018, 0.012, 0.022, 0.016, 0.024, 0.014]
+function A4Lightbox({ certifications, activeIndex, onClose, onNavigate }: LightboxProps) {
+  const thumbsRef = useRef<HTMLDivElement>(null)
+  const cert = certifications[activeIndex]
+  const palette = CARD_PALETTES[activeIndex % CARD_PALETTES.length]
 
-// ─── CertCard ─────────────────────────────────────────────────────────────────
-
-interface CertCardProps {
-  cert: Certification
-  index: number
-  hoveredId: string | null
-  onHover: (id: string | null) => void
-  scrollY: number
-}
-
-function CertCard({ cert, index, hoveredId, onHover, scrollY }: CertCardProps) {
-  const cardRef = useRef<HTMLDivElement>(null)
-  const [revealed, setRevealed] = useState(false)
-
+  // Scroll active thumbnail into view
   useEffect(() => {
-    const el = cardRef.current
-    if (!el) return
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          // Stagger each card reveal based on its index
-          const timer = setTimeout(() => setRevealed(true), index * 110)
-          return () => clearTimeout(timer)
-        }
-      },
-      { threshold: 0.12 }
-    )
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [index])
+    const container = thumbsRef.current
+    if (!container) return
+    const activeThumb = container.querySelector<HTMLElement>('[data-active="true"]')
+    if (activeThumb) {
+      activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+    }
+  }, [activeIndex])
 
-  const isHovered = hoveredId === cert.id
-  const isDeemphasized = hoveredId !== null && !isHovered
-  const parallaxY = -(scrollY * DEPTH_LAYER[index % DEPTH_LAYER.length])
-
-  const category = CATEGORY_STYLES[cert.category]
+  // Close on Escape, navigate with arrow keys
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowRight') onNavigate((activeIndex + 1) % certifications.length)
+      if (e.key === 'ArrowLeft') onNavigate((activeIndex - 1 + certifications.length) % certifications.length)
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [activeIndex, certifications.length, onClose, onNavigate])
 
   return (
-    <div
-      ref={cardRef}
-      className="cert-card-wrapper"
-      style={{
-        opacity: revealed ? 1 : 0,
-        transform: `translateY(${revealed ? parallaxY : parallaxY + 36}px)`,
-        transition: `opacity 0.55s ease ${index * 0.07}s, transform 0.55s cubic-bezier(0.22,1,0.36,1) ${index * 0.07}s`,
-        willChange: 'transform, opacity',
-      }}
-    >
-      <div
-        className={[
-          'cert-card',
-          isHovered ? 'cert-card--hovered' : '',
-          isDeemphasized ? 'cert-card--deemphasized' : '',
-        ]
-          .join(' ')
-          .trim()}
-        onMouseEnter={() => onHover(cert.id)}
-        onMouseLeave={() => onHover(null)}
-        onFocus={() => onHover(cert.id)}
-        onBlur={() => onHover(null)}
-        tabIndex={0}
-        role="article"
-        aria-label={`${cert.title} by ${cert.issuer}`}
-      >
-        {/* Sheen layer — animates on hover */}
-        <div className="cert-card__sheen" aria-hidden="true" />
+    <div className="lb-overlay" onClick={onClose} role="dialog" aria-modal aria-label="Certificate viewer">
+      <div className="lb-container" onClick={(e) => e.stopPropagation()}>
 
-        {/* Accent bar at bottom */}
-        <div className="cert-card__accent-bar" aria-hidden="true" />
+        {/* Close button */}
+        <button className="lb-close" onClick={onClose} aria-label="Close">✕</button>
 
-        {/* Top row: icon + badge */}
-        <div className="cert-card__top">
-          <div className={`cert-icon ${isHovered ? 'cert-icon--hovered' : ''}`}>
-            {cert.imageUrl ? (
-              <img src={cert.imageUrl} alt={`${cert.issuer} logo`} className="cert-icon__img" />
-            ) : (
-              <span className="cert-icon__emoji" role="img" aria-label={cert.issuer}>
-                {cert.icon}
-              </span>
-            )}
-          </div>
-          <span className={category.className}>{category.label}</span>
-        </div>
-
-        {/* Body: title + issuer + credential id */}
-        <div className="cert-card__body">
-          <h3 className="cert-card__title">{cert.title}</h3>
-          <p className="cert-card__issuer">{cert.issuer}</p>
-
-          {/* Credential ID — slides in on hover */}
-          <div
-            className="cert-card__credential"
-            style={{
-              maxHeight: isHovered ? '2rem' : '0',
-              opacity: isHovered ? 1 : 0,
-              transition: 'max-height 0.3s ease, opacity 0.3s ease',
-            }}
+        {/* A4 Horizontal Certificate Viewer */}
+        <div className="lb-stage">
+          {/* Prev */}
+          <button
+            className="lb-nav lb-nav--prev"
+            onClick={() => onNavigate((activeIndex - 1 + certifications.length) % certifications.length)}
+            aria-label="Previous certificate"
           >
-            {cert.credentialId && (
-              <span className="cert-card__credential-id">
-                <ShieldCheck size={11} aria-hidden="true" />
-                {cert.credentialId}
-              </span>
+            ‹
+          </button>
+
+          {/* A4 paper — always horizontal (landscape) */}
+          <div className="lb-a4" style={{ borderColor: palette.accent + '55' }}>
+            {cert.imageUrl ? (
+              <img
+                src={cert.imageUrl}
+                alt={`${cert.title} certificate`}
+                className="lb-a4__img"
+              />
+            ) : (
+              <div className="lb-a4__placeholder" style={{ '--accent': palette.accent } as React.CSSProperties}>
+                <div className="lb-a4__placeholder-inner">
+                  <div className="lb-a4__deco-corner lb-a4__deco-corner--tl" />
+                  <div className="lb-a4__deco-corner lb-a4__deco-corner--tr" />
+                  <div className="lb-a4__deco-corner lb-a4__deco-corner--bl" />
+                  <div className="lb-a4__deco-corner lb-a4__deco-corner--br" />
+                  <div className="lb-a4__badge-ring" style={{ borderColor: palette.accent }}>
+                    <Award size={32} color={palette.accent} />
+                  </div>
+                  <p className="lb-a4__cert-title">{cert.title}</p>
+                  <p className="lb-a4__cert-sub">Certificate of Completion</p>
+                  <div className="lb-a4__divider" style={{ background: palette.accent }} />
+                  <p className="lb-a4__cert-num">{cert.id}</p>
+                </div>
+              </div>
             )}
+
+            {/* Index badge */}
+            <span className="lb-a4__index" style={{ background: palette.accent }}>
+              {String(activeIndex + 1).padStart(2, '0')} / {String(certifications.length).padStart(2, '0')}
+            </span>
           </div>
+
+          {/* Next */}
+          <button
+            className="lb-nav lb-nav--next"
+            onClick={() => onNavigate((activeIndex + 1) % certifications.length)}
+            aria-label="Next certificate"
+          >
+            ›
+          </button>
         </div>
 
-        {/* Footer: date + verify link */}
-        <div className="cert-card__footer">
-          <span className="cert-card__date">{cert.date}</span>
-          {cert.credentialUrl && (
-            <a
-              href={cert.credentialUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`cert-card__verify ${isHovered ? 'cert-card__verify--visible' : ''}`}
-              tabIndex={isHovered ? 0 : -1}
-              aria-label={`Verify ${cert.title} credential`}
-            >
-              Verify <ExternalLink size={11} aria-hidden="true" />
-            </a>
-          )}
+        {/* Title */}
+        <p className="lb-title">{cert.title}</p>
+
+        {/* Horizontal thumbnail strip — scrollable */}
+        <div ref={thumbsRef} className="lb-thumbs" role="tablist">
+          {certifications.map((c, i) => {
+            const p = CARD_PALETTES[i % CARD_PALETTES.length]
+            return (
+              <button
+                key={c.id + i}
+                className={`lb-thumb ${i === activeIndex ? 'lb-thumb--active' : ''}`}
+                style={{
+                  '--thumb-accent': p.accent,
+                  '--thumb-bg': p.bg,
+                  borderColor: i === activeIndex ? p.accent : 'transparent',
+                } as React.CSSProperties}
+                onClick={() => onNavigate(i)}
+                data-active={i === activeIndex}
+                role="tab"
+                aria-selected={i === activeIndex}
+                aria-label={c.title}
+              >
+                {c.imageUrl ? (
+                  <img src={c.imageUrl} alt={c.title} className="lb-thumb__img" />
+                ) : (
+                  <span className="lb-thumb__num">{String(i + 1).padStart(2, '0')}</span>
+                )}
+              </button>
+            )
+          })}
         </div>
       </div>
     </div>
@@ -262,10 +185,6 @@ function CertCard({ cert, index, hoveredId, onHover, scrollY }: CertCardProps) {
 
 // ─── CertificationsSection ────────────────────────────────────────────────────
 
-/**
- * Props allow easy backend integration:
- * Pass a `certifications` array fetched from your API to replace static data.
- */
 interface CertificationsSectionProps {
   certifications?: Certification[]
 }
@@ -273,15 +192,14 @@ interface CertificationsSectionProps {
 export function CertificationsSection({
   certifications = CERTIFICATIONS,
 }: CertificationsSectionProps) {
+  const [activeIndex, setActiveIndex] = useState<number>(0)
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const [sectionVisible, setSectionVisible] = useState(false)
-  const [scrollY, setScrollY] = useState(0)
-  const [hoveredId, setHoveredId] = useState<string | null>(null)
-  const [isLocked, setIsLocked] = useState(false)
-
+  const [isMobile, setIsMobile] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
-  const gridRef = useRef<HTMLDivElement>(null)
+  const trackRef = useRef<HTMLDivElement>(null)
 
-  // Reveal section header
+  // Section reveal
   useEffect(() => {
     const el = sectionRef.current
     if (!el) return
@@ -293,89 +211,237 @@ export function CertificationsSection({
     return () => observer.disconnect()
   }, [])
 
-  // Scroll tracking for parallax + sticky lock
+  // Track viewport size
   useEffect(() => {
-    let rafId: number
-    const onScroll = () => {
-      cancelAnimationFrame(rafId)
-      rafId = requestAnimationFrame(() => {
-        setScrollY(window.scrollY)
-
-        if (gridRef.current) {
-          const rect = gridRef.current.getBoundingClientRect()
-          const viewportMid = window.innerHeight / 2
-          // Lock when grid centre is within 220px of viewport centre
-          const gridMid = rect.top + rect.height / 2
-          setIsLocked(Math.abs(gridMid - viewportMid) < 220 && rect.top > -80)
-        }
-      })
-    }
-
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      cancelAnimationFrame(rafId)
-    }
+    const check = () => setIsMobile(window.innerWidth < 640)
+    check()
+    window.addEventListener('resize', check, { passive: true })
+    return () => window.removeEventListener('resize', check)
   }, [])
+
+  // Lock body scroll when lightbox is open
+  useEffect(() => {
+    if (lightboxIndex !== null) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [lightboxIndex])
+
+  // Scroll active card into view in track
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) return
+    const activeCard = track.querySelector<HTMLElement>('[data-active="true"]')
+    if (activeCard) {
+      activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+    }
+  }, [activeIndex])
+
+  // Keyboard navigation on track
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault()
+        setActiveIndex((i) => (i + 1) % certifications.length)
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault()
+        setActiveIndex((i) => (i - 1 + certifications.length) % certifications.length)
+      }
+    },
+    [certifications.length]
+  )
+
+  const count = certifications.length
+
+  // How many cards are visible in the accordion at once
+  // Cap at 8 visible; extras are reachable via horizontal scroll on the track
+  const VISIBLE_CAP = 8
 
   return (
     <>
-      {/* ── Scoped styles ── */}
       <style>{SECTION_STYLES}</style>
 
-      <section ref={sectionRef} className="cert-section" aria-label="Licenses and certifications">
-        <div className="cert-section__inner">
+      {lightboxIndex !== null && (
+        <A4Lightbox
+          certifications={certifications}
+          activeIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onNavigate={(i) => setLightboxIndex(i)}
+        />
+      )}
 
-          {/* Header */}
+      <section
+        ref={sectionRef}
+        className="cs-section"
+        aria-label="Licenses and certifications"
+      >
+        <div className="cs-inner">
+
+          {/* ── Header ── */}
           <header
-            className="cert-header"
+            className="cs-header"
             style={{
               opacity: sectionVisible ? 1 : 0,
-              transform: sectionVisible ? 'translateY(0)' : 'translateY(20px)',
-              transition: 'opacity 0.8s ease, transform 0.8s cubic-bezier(0.22,1,0.36,1)',
+              transform: sectionVisible ? 'none' : 'translateY(24px)',
+              transition: 'opacity 0.9s ease, transform 0.9s cubic-bezier(0.22,1,0.36,1)',
             }}
           >
-            <div className="cert-header__eyebrow">
-              <Award size={16} aria-hidden="true" />
+            <div className="cs-eyebrow">
+              <Award size={14} aria-hidden="true" />
               <span>Credentials</span>
             </div>
-            <h2 className="cert-header__title">
+            <h2 className="cs-title">
               Licenses &amp; <em>Certifications</em>
             </h2>
-            <p className="cert-header__subtitle">
-              Credentials validating expertise across cloud architecture,
-              system design, and modern development practices.
-            </p>
+            {count > VISIBLE_CAP && (
+              <p className="cs-subtitle">
+                Showing {VISIBLE_CAP} of {count} — scroll to see more
+              </p>
+            )}
           </header>
 
-          {/* Grid */}
+          {/* ── Accordion Slider — horizontally scrollable ── */}
           <div
-            ref={gridRef}
-            className={`cert-grid ${isLocked ? 'cert-grid--locked' : ''}`}
-            role="list"
-          >
-            {certifications.map((cert, index) => (
-              <CertCard
-                key={cert.id}
-                cert={cert}
-                index={index}
-                hoveredId={hoveredId}
-                onHover={setHoveredId}
-                scrollY={scrollY}
-              />
-            ))}
-          </div>
-
-          {/* Bottom divider */}
-          <div
-            className="cert-section__divider"
+            className="cs-track-wrapper"
             style={{
               opacity: sectionVisible ? 1 : 0,
-              transform: sectionVisible ? 'scaleX(1)' : 'scaleX(0)',
-              transition: 'opacity 0.8s ease 0.4s, transform 0.8s ease 0.4s',
+              transform: sectionVisible ? 'none' : 'translateY(40px)',
+              transition: 'opacity 0.9s ease 0.15s, transform 0.9s cubic-bezier(0.22,1,0.36,1) 0.15s',
             }}
-            aria-hidden="true"
-          />
+          >
+            <div
+              ref={trackRef}
+              className="cs-track"
+              role="group"
+              aria-label="Certification cards"
+              onKeyDown={handleKeyDown}
+              tabIndex={0}
+            >
+              {certifications.map((cert, i) => {
+                const palette = CARD_PALETTES[i % CARD_PALETTES.length]
+                const isActive = activeIndex === i
+                const isPast = i < activeIndex
+
+                return (
+                  <button
+                    key={cert.id + i}
+                    data-active={isActive}
+                    className={[
+                      'cs-card',
+                      isActive ? 'cs-card--active' : '',
+                      isPast ? 'cs-card--past' : '',
+                    ].join(' ').trim()}
+                    style={{
+                      '--card-bg': palette.bg,
+                      '--card-accent': palette.accent,
+                      '--card-text': palette.text,
+                      flex: isActive ? (isMobile ? '3' : '4') : '1',
+                      minWidth: isActive ? (isMobile ? '160px' : '220px') : '44px',
+                      transform: isActive
+                        ? 'perspective(1000px) rotateY(0deg) skewY(0deg)'
+                        : isPast
+                        ? `perspective(1000px) rotateY(${isMobile ? 8 : 12}deg) skewY(${isMobile ? -3 : -5}deg)`
+                        : `perspective(1000px) rotateY(${isMobile ? -8 : -12}deg) skewY(${isMobile ? 3 : 5}deg)`,
+                      background: palette.bg,
+                      zIndex: isActive ? count + 1 : count - i,
+                    } as React.CSSProperties}
+                    onClick={() => {
+                      if (isActive) {
+                        // Second click opens lightbox
+                        setLightboxIndex(i)
+                      } else {
+                        setActiveIndex(i)
+                      }
+                    }}
+                    onDoubleClick={() => setLightboxIndex(i)}
+                    aria-pressed={isActive}
+                    aria-label={`${cert.title}${isActive ? ' — click to view certificate' : ''}`}
+                  >
+                    {/* Full-bleed background image */}
+                    {cert.imageUrl && (
+                      <img
+                        src={cert.imageUrl}
+                        alt={`${cert.title} certificate`}
+                        className="cs-card__bg-img"
+                        aria-hidden="true"
+                      />
+                    )}
+
+                    {/* Glow layer */}
+                    <span
+                      className="cs-card__glow"
+                      aria-hidden="true"
+                      style={{ background: `radial-gradient(ellipse at 50% 0%, ${palette.accent}44 0%, transparent 70%)` }}
+                    />
+
+                    {/* Glass shimmer highlight */}
+                    <span className="cs-card__shimmer" aria-hidden="true" />
+
+                    {/* Index number */}
+                    <span className="cs-card__num" aria-hidden="true">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+
+                    {/* Placeholder icon when no image */}
+                    {!cert.imageUrl && (
+                      <div className="cs-card__placeholder-icon">
+                        <Award size={isMobile ? 28 : 40} color={palette.accent} strokeWidth={1.2} />
+                      </div>
+                    )}
+
+                    {/* View hint on active */}
+                    {isActive && (
+                      <span className="cs-card__hint" aria-hidden="true">
+                        tap to view
+                      </span>
+                    )}
+
+                    {/* Liquid Glass title panel */}
+                    <div className="cs-card__glass">
+                      <span className="cs-card__glass-edge" aria-hidden="true" />
+                      <span className="cs-card__title">{cert.title}</span>
+                    </div>
+
+                    {/* Bottom accent line */}
+                    <span
+                      className="cs-card__bar"
+                      aria-hidden="true"
+                      style={{ background: palette.accent }}
+                    />
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* ── Dot indicators — scrollable when many ── */}
+          <div
+            className="cs-dots-wrapper"
+            style={{
+              opacity: sectionVisible ? 1 : 0,
+              transition: 'opacity 0.9s ease 0.3s',
+            }}
+          >
+            <div className="cs-dots" role="tablist" aria-label="Select certification">
+              {certifications.map((cert, i) => (
+                <button
+                  key={cert.id + i}
+                  className={`cs-dot ${activeIndex === i ? 'cs-dot--active' : ''}`}
+                  style={
+                    activeIndex === i
+                      ? { background: CARD_PALETTES[i % CARD_PALETTES.length].accent }
+                      : {}
+                  }
+                  onClick={() => setActiveIndex(i)}
+                  role="tab"
+                  aria-selected={activeIndex === i}
+                  aria-label={cert.title}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </section>
     </>
@@ -383,333 +449,683 @@ export function CertificationsSection({
 }
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
-// Kept separate for readability and easy theming.
-// Accent colour is sourced from --accent in globals.css.
 
 const SECTION_STYLES = `
-  .cert-section {
+  /* ── Section ── */
+  .cs-section {
     padding: 6rem 1rem;
+    background: var(--background);
+    overflow: hidden;
   }
 
-  .cert-section__inner {
-    max-width: 72rem;
+  .cs-inner {
+    max-width: 80rem;
     margin: 0 auto;
     padding: 0 1rem;
   }
 
   /* ── Header ── */
-  .cert-header {
-    margin-bottom: 3.5rem;
+  .cs-header {
+    margin-bottom: 3rem;
   }
 
-  .cert-header__eyebrow {
+  .cs-eyebrow {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    font-size: 0.72rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--accent-foreground);
     background: var(--accent);
     padding: 0.3rem 0.75rem;
     border-radius: 100px;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1.1rem;
   }
 
-  .cert-header__title {
+  .cs-title {
     font-family: var(--font-serif, Georgia, serif);
-    font-size: clamp(2rem, 5vw, 3.25rem);
+    font-size: clamp(1.75rem, 4.5vw, 3rem);
     font-weight: 700;
     color: var(--foreground);
     line-height: 1.1;
-    margin: 0 0 1rem;
+    margin: 0 0 0.5rem;
   }
 
-  .cert-header__title em {
+  .cs-title em {
     font-style: italic;
     color: var(--muted-foreground);
   }
 
-  .cert-header__subtitle {
-    font-size: 1rem;
+  .cs-subtitle {
+    font-size: 0.75rem;
     color: var(--muted-foreground);
-    max-width: 36rem;
-    line-height: 1.65;
-    margin: 0;
+    margin: 0.5rem 0 0;
   }
 
-  /* ── Grid ── */
-  .cert-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    transition: top 0.3s ease;
+  /* ── Track Wrapper — enables horizontal scroll on overflow ── */
+  .cs-track-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    /* Hide scrollbar visually but keep it functional */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 0.5rem;
+    /* Extra room for 3D skew not to clip */
+    padding-top: 4px;
+  }
+  .cs-track-wrapper::-webkit-scrollbar {
+    display: none;
   }
 
-  .cert-grid--locked {
-    position: sticky;
-    top: 5rem;
-  }
-
-  @media (min-width: 640px) {
-    .cert-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .cert-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  /* ── Card wrapper ── */
-  .cert-card-wrapper {
-    /* animation state managed via inline style */
+  /* ── Accordion Track ── */
+  .cs-track {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 0.5rem;
+    height: 420px;
+    /* Min width ensures cards don't shrink below usable size */
+    min-width: min-content;
+    outline: none;
+    overflow: visible;
   }
 
   /* ── Card ── */
-  .cert-card {
+  .cs-card {
     position: relative;
     overflow: hidden;
-    border-radius: 1rem;
-    border: 1px solid var(--border);
-    background: var(--card);
-    padding: 1.4rem;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(255,255,255,0.06);
     cursor: pointer;
-    outline: none;
+    padding: 0;
+    background: var(--card-bg, #0f172a);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    flex-shrink: 0;
+
     transition:
+      flex 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      min-width 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
       box-shadow 0.35s ease,
-      border-color 0.35s ease,
-      opacity 0.35s ease,
-      transform 0.35s cubic-bezier(0.22,1,0.36,1);
+      border-color 0.35s ease;
+
+    appearance: none;
+    -webkit-appearance: none;
+    outline: none;
+    font: inherit;
+    color: inherit;
+    text-align: left;
   }
 
-  .cert-card:focus-visible {
-    box-shadow: 0 0 0 3px var(--ring);
+  .cs-card:focus-visible {
+    outline: 2px solid var(--card-accent, #38bdf8);
+    outline-offset: 3px;
   }
 
-  .cert-card--hovered {
-    border-color: var(--ring);
+  .cs-card--active {
+    border-color: rgba(255,255,255,0.18);
     box-shadow:
-      0 0 0 1px var(--ring),
-      0 12px 40px -8px color-mix(in oklab, var(--foreground) 12%, transparent);
-    transform: translateY(-3px);
+      0 30px 80px -20px rgba(0,0,0,0.7),
+      0 0 0 1px rgba(255,255,255,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.12);
   }
 
-  .cert-card--deemphasized {
-    opacity: 0.38;
-  }
-
-  /* Sheen sweep on hover */
-  .cert-card__sheen {
+  /* ── Full-bleed background image ── */
+  .cs-card__bg-img {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-      105deg,
-      transparent 40%,
-      color-mix(in oklab, var(--foreground) 4%, transparent) 50%,
-      transparent 60%
-    );
-    transform: translateX(-100%);
-    transition: transform 0s;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0;
+    scale: 1.08;
+    transition: opacity 0.6s ease, scale 0.8s cubic-bezier(0.22,1,0.36,1);
     pointer-events: none;
   }
 
-  .cert-card--hovered .cert-card__sheen {
-    transform: translateX(100%);
-    transition: transform 0.55s ease;
+  .cs-card--active .cs-card__bg-img {
+    opacity: 1;
+    scale: 1;
   }
 
-  /* Bottom accent line */
-  .cert-card__accent-bar {
+  /* ── Glow ── */
+  .cs-card__glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 1;
+    transition: opacity 0.5s ease;
+  }
+
+  .cs-card--active .cs-card__glow {
+    opacity: 1;
+  }
+
+  /* ── Animated glass shimmer ── */
+  .cs-card__shimmer {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0;
+    background: linear-gradient(
+      115deg,
+      transparent 30%,
+      rgba(255,255,255,0.06) 45%,
+      rgba(255,255,255,0.12) 50%,
+      rgba(255,255,255,0.06) 55%,
+      transparent 70%
+    );
+    background-size: 250% 100%;
+    transition: opacity 0.5s ease;
+  }
+
+  .cs-card--active .cs-card__shimmer {
+    opacity: 1;
+    animation: cs-shimmer 4s ease-in-out infinite;
+  }
+
+  @keyframes cs-shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -50% 0; }
+  }
+
+  /* ── Index number ── */
+  .cs-card__num {
+    position: absolute;
+    top: 1.25rem;
+    left: 1.25rem;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.2);
+    font-variant-numeric: tabular-nums;
+    transition: color 0.3s ease;
+    z-index: 5;
+  }
+
+  .cs-card--active .cs-card__num {
+    color: rgba(255,255,255,0.85);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  }
+
+  /* ── Placeholder icon (no image) ── */
+  .cs-card__placeholder-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+    z-index: 3;
+    opacity: 0;
+    scale: 0.7;
+    transition: opacity 0.4s ease 0.15s, scale 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.15s;
+  }
+
+  .cs-card--active .cs-card__placeholder-icon {
+    opacity: 0.6;
+    scale: 1;
+  }
+
+  /* ── "tap to view" hint ── */
+  .cs-card__hint {
+    position: absolute;
+    top: 1.1rem;
+    right: 1.1rem;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.8);
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    opacity: 0.75;
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  /* ── Apple Liquid Glass title panel ── */
+  .cs-card__glass {
+    position: relative;
+    z-index: 4;
+    width: 100%;
+    padding: 1.4rem 1.5rem;
+    /* Multi-layer frosted glass */
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255,255,255,0.08) 0%,
+        rgba(255,255,255,0.04) 100%
+      );
+    backdrop-filter: blur(24px) saturate(1.6) brightness(1.1);
+    -webkit-backdrop-filter: blur(24px) saturate(1.6) brightness(1.1);
+    /* Specular top edge */
+    border-top: 1px solid rgba(255,255,255,0.18);
+    /* Subtle inner glow */
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.12),
+      inset 0 -1px 0 rgba(0,0,0,0.06),
+      0 -8px 30px rgba(0,0,0,0.15);
+    transition: padding 0.4s ease, backdrop-filter 0.4s ease;
+  }
+
+  /* Specular highlight edge (refraction line) */
+  .cs-card__glass-edge {
+    position: absolute;
+    top: -1px;
+    left: 8%;
+    right: 8%;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255,255,255,0.35) 30%,
+      rgba(255,255,255,0.5) 50%,
+      rgba(255,255,255,0.35) 70%,
+      transparent 100%
+    );
+    opacity: 0;
+    transition: opacity 0.4s ease 0.2s;
+    pointer-events: none;
+  }
+
+  .cs-card--active .cs-card__glass-edge {
+    opacity: 1;
+  }
+
+  /* Collapsed cards: minimal glass, vertical text */
+  .cs-card:not(.cs-card--active) .cs-card__glass {
+    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-top-color: transparent;
+    box-shadow: none;
+    padding: 1.1rem 1rem;
+  }
+
+  .cs-card__title {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.01em;
+    transition: font-size 0.4s ease, white-space 0.2s ease, color 0.3s ease;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+
+  .cs-card--active .cs-card__title {
+    font-size: 1.05rem;
+    white-space: normal;
+    color: #fff;
+    writing-mode: horizontal-tb;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+  }
+
+  /* ── Bottom accent bar ── */
+  .cs-card__bar {
     position: absolute;
     bottom: 0;
-    left: 10%;
-    right: 10%;
-    height: 2px;
-    border-radius: 2px 2px 0 0;
-    background: var(--foreground);
-    opacity: 0;
-    transition: opacity 0.3s ease, left 0.3s ease, right 0.3s ease;
-  }
-
-  .cert-card--hovered .cert-card__accent-bar {
-    opacity: 0.7;
     left: 20%;
     right: 20%;
+    height: 3px;
+    border-radius: 3px 3px 0 0;
+    opacity: 0;
+    z-index: 5;
+    transition: opacity 0.4s ease, left 0.4s ease, right 0.4s ease;
   }
 
-  /* ── Top row ── */
-  .cert-card__top {
+  .cs-card--active .cs-card__bar {
+    opacity: 1;
+    left: 8%;
+    right: 8%;
+  }
+
+  /* ── Dots — scrollable strip when many ── */
+  .cs-dots-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin-top: 1.75rem;
+  }
+  .cs-dots-wrapper::-webkit-scrollbar { display: none; }
+
+  .cs-dots {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    margin-bottom: 1.1rem;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: min-content;
+    padding: 0 0.5rem;
   }
 
-  /* Icon */
-  .cert-icon {
-    width: 2.75rem;
-    height: 2.75rem;
-    border-radius: 0.6rem;
-    border: 1px solid var(--border);
-    background: var(--secondary);
+  .cs-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 100px;
+    border: none;
+    background: var(--border);
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+    transition: width 0.35s cubic-bezier(0.22,1,0.36,1), background 0.3s ease;
+  }
+
+  .cs-dot--active {
+    width: 22px;
+  }
+
+  /* ─────────────────────────────────────────────────────────────────
+     LIGHTBOX
+  ───────────────────────────────────────────────────────────────── */
+
+  .lb-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(12px);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), border-color 0.3s ease;
+    animation: lb-fade-in 0.25s ease forwards;
+  }
+
+  @keyframes lb-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .lb-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+    width: min(92vw, 900px);
+    max-height: 95vh;
+    padding: 1rem;
+    animation: lb-slide-up 0.3s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+
+  @keyframes lb-slide-up {
+    from { transform: translateY(20px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  .lb-close {
+    position: absolute;
+    top: -0.25rem;
+    right: -0.25rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.7);
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+    z-index: 10;
+  }
+  .lb-close:hover { background: rgba(255,255,255,0.18); color: #fff; }
+
+  /* ── Stage (nav + A4 paper) ── */
+  .lb-stage {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .lb-nav {
     flex-shrink: 0;
-  }
-
-  .cert-icon--hovered {
-    transform: scale(1.15) rotate(-4deg);
-    border-color: var(--ring);
-  }
-
-  .cert-icon__emoji {
-    font-size: 1.35rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.8);
+    font-size: 1.5rem;
     line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  .lb-nav:hover { background: rgba(255,255,255,0.15); }
+
+  /* ── A4 Paper — always landscape (297:210 ≈ 1.414:1) ── */
+  .lb-a4 {
+    position: relative;
+    flex: 1;
+    /* Landscape A4 ratio */
+    aspect-ratio: 297 / 210;
+    border-radius: 4px;
+    border: 1px solid;
+    background: #1a1a2e;
+    overflow: hidden;
+    box-shadow:
+      0 40px 80px -20px rgba(0,0,0,0.8),
+      inset 0 1px 0 rgba(255,255,255,0.05);
+    /* Prevent the paper from growing too tall on small screens */
+    max-height: 55vh;
+    width: auto;
   }
 
-  .cert-icon__img {
-    width: 1.75rem;
-    height: 1.75rem;
+  .lb-a4__img {
+    width: 100%;
+    height: 100%;
     object-fit: contain;
-    border-radius: 0.25rem;
+    display: block;
   }
 
-  /* Category badge */
-  .cert-badge {
-    font-size: 0.67rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
+  /* Placeholder certificate layout */
+  .lb-a4__placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5%;
+  }
+
+  .lb-a4__placeholder-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 4px;
+    padding: 8%;
+  }
+
+  /* Decorative corner brackets */
+  .lb-a4__deco-corner {
+    position: absolute;
+    width: 1.25rem;
+    height: 1.25rem;
+    border-color: var(--accent, #38bdf8);
+    border-style: solid;
+    opacity: 0.5;
+  }
+  .lb-a4__deco-corner--tl { top: 0.5rem; left: 0.5rem; border-width: 1px 0 0 1px; }
+  .lb-a4__deco-corner--tr { top: 0.5rem; right: 0.5rem; border-width: 1px 1px 0 0; }
+  .lb-a4__deco-corner--bl { bottom: 0.5rem; left: 0.5rem; border-width: 0 0 1px 1px; }
+  .lb-a4__deco-corner--br { bottom: 0.5rem; right: 0.5rem; border-width: 0 1px 1px 0; }
+
+  .lb-a4__badge-ring {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 50%;
+    border: 1.5px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.25rem;
+  }
+
+  .lb-a4__cert-title {
+    font-size: clamp(0.7rem, 2vw, 1.1rem);
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+    text-align: center;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .lb-a4__cert-sub {
+    font-size: clamp(0.55rem, 1.2vw, 0.75rem);
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    padding: 0.25rem 0.6rem;
-    border-radius: 100px;
-    border: 1px solid transparent;
-  }
-
-  .cert-badge--professional {
-    background: color-mix(in oklab, var(--foreground) 8%, transparent);
-    color: var(--foreground);
-    border-color: color-mix(in oklab, var(--foreground) 16%, transparent);
-  }
-
-  .cert-badge--design {
-    background: color-mix(in oklab, #60a5fa 12%, transparent);
-    color: #3b82f6;
-    border-color: color-mix(in oklab, #60a5fa 30%, transparent);
-  }
-
-  .cert-badge--technology {
-    background: color-mix(in oklab, #a78bfa 12%, transparent);
-    color: #7c3aed;
-    border-color: color-mix(in oklab, #a78bfa 30%, transparent);
-  }
-
-  /* ── Body ── */
-  .cert-card__body {
-    margin-bottom: 1rem;
-  }
-
-  .cert-card__title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--foreground);
-    line-height: 1.35;
-    margin: 0 0 0.3rem;
-  }
-
-  .cert-card__issuer {
-    font-size: 0.8rem;
-    color: var(--muted-foreground);
     margin: 0;
   }
 
-  /* Credential ID reveal */
-  .cert-card__credential {
-    overflow: hidden;
-    margin-top: 0.5rem;
+  .lb-a4__divider {
+    width: 30%;
+    height: 1px;
+    opacity: 0.4;
+    margin: 0.25rem 0;
   }
 
-  .cert-card__credential-id {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: 0.7rem;
-    font-family: var(--font-mono, monospace);
-    color: var(--muted-foreground);
-    background: var(--secondary);
-    border: 1px solid var(--border);
+  .lb-a4__cert-num {
+    font-size: clamp(0.5rem, 1vw, 0.65rem);
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 0.1em;
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Index badge on A4 */
+  .lb-a4__index {
+    position: absolute;
+    bottom: 0.6rem;
+    right: 0.6rem;
     padding: 0.2rem 0.5rem;
-    border-radius: 0.3rem;
+    border-radius: 100px;
+    font-size: 0.6rem;
+    font-weight: 800;
+    color: #000;
+    letter-spacing: 0.08em;
+    font-variant-numeric: tabular-nums;
   }
 
-  /* ── Footer ── */
-  .cert-card__footer {
+  /* ── Title ── */
+  .lb-title {
+    font-size: clamp(0.85rem, 2vw, 1rem);
+    font-weight: 600;
+    color: rgba(255,255,255,0.8);
+    text-align: center;
+    margin: 0;
+    letter-spacing: 0.01em;
+  }
+
+  /* ── Thumbnail Strip — horizontally scrollable ── */
+  .lb-thumbs {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    overflow-x: auto;
+    width: 100%;
+    padding-bottom: 0.25rem;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.2) transparent;
+  }
+  .lb-thumbs::-webkit-scrollbar { height: 3px; }
+  .lb-thumbs::-webkit-scrollbar-track { background: transparent; }
+  .lb-thumbs::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+  .lb-thumb {
+    flex-shrink: 0;
+    width: 3.5rem;
+    height: 2.5rem;
+    /* Landscape A4-ish ratio */
+    border-radius: 4px;
+    border: 1.5px solid;
+    background: var(--thumb-bg, #0f172a);
+    cursor: pointer;
+    overflow: hidden;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
+    transition: border-color 0.2s, opacity 0.2s, transform 0.2s;
+    opacity: 0.5;
+    padding: 0;
   }
 
-  .cert-card__date {
-    font-size: 0.72rem;
-    color: var(--muted-foreground);
+  .lb-thumb:hover { opacity: 0.8; transform: translateY(-1px); }
+  .lb-thumb--active { opacity: 1; transform: translateY(-2px); }
+
+  .lb-thumb__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
-  .cert-card__verify {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: 0.72rem;
-    font-weight: 500;
-    color: var(--muted-foreground);
-    text-decoration: none;
-    opacity: 0;
-    transition: opacity 0.25s ease, color 0.25s ease;
+  .lb-thumb__num {
+    font-size: 0.6rem;
+    font-weight: 800;
+    color: var(--thumb-accent);
+    font-variant-numeric: tabular-nums;
   }
 
-  .cert-card__verify--visible {
-    opacity: 1;
-    color: var(--foreground);
-  }
-
-  .cert-card__verify:hover {
-    text-decoration: underline;
-  }
-
-  /* ── Bottom divider ── */
-  .cert-section__divider {
-    margin-top: 4rem;
-    height: 1px;
-    background: linear-gradient(
-      to right,
-      transparent,
-      var(--border) 30%,
-      var(--border) 70%,
-      transparent
-    );
-    transform-origin: center;
-  }
-
-  /* ── Mobile adjustments ── */
+  /* ── Mobile ── */
   @media (max-width: 639px) {
-    .cert-section {
-      padding: 4rem 0;
+    .cs-section {
+      padding: 4rem 0.5rem;
     }
 
-    .cert-grid--locked {
-      position: static; /* disable sticky lock on mobile — too aggressive */
+    .cs-track {
+      height: 300px;
+      gap: 0.3rem;
     }
 
-    .cert-card {
-      padding: 1.1rem;
+    .cs-card__glass {
+      padding: 0.9rem 1rem;
     }
 
-    .cert-card--deemphasized {
-      opacity: 1; /* no dim on mobile touch */
+    .cs-card__num {
+      top: 0.75rem;
+      left: 0.75rem;
+    }
+
+    .cs-card__placeholder-icon {
+      transform: translate(-50%, -55%);
+    }
+
+    .lb-nav {
+      width: 2rem;
+      height: 2rem;
+      font-size: 1.2rem;
+    }
+
+    .lb-a4 {
+      max-height: 45vw;
+    }
+
+    .lb-thumb {
+      width: 2.75rem;
+      height: 2rem;
     }
   }
 `

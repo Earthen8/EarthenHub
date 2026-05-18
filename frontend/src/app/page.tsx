@@ -13,7 +13,8 @@ import {
   getFeaturedProjects,
   getExperiences,
   getTools,
-  getPhilosophy
+  getPhilosophy,
+  getCertifications
 } from '@/lib/api'
 
 export default async function Home() {
@@ -23,13 +24,15 @@ export default async function Home() {
     projects,
     experiences,
     tools,
-    philosophy
+    philosophy,
+    certifications
   ] = await Promise.all([
     getDisciplines(),
     getFeaturedProjects(),
     getExperiences(),
     getTools(),
-    getPhilosophy()
+    getPhilosophy(),
+    getCertifications()
   ]);
 
   return (
@@ -44,7 +47,7 @@ export default async function Home() {
       <AboutSection philosophy={philosophy} />
       <SkillList disciplines={disciplines} projects={projects} />
       <TimelineSection experiences={experiences} />
-      <CertificationsSection />
+      <CertificationsSection certifications={certifications} />
       <ToolsSection tools={tools} />
       <ContactSection />
       <Footer />

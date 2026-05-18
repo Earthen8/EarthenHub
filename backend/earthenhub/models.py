@@ -151,3 +151,25 @@ class Inquiry(models.Model):
 
     def __str__(self):
         return f"Message from {self.name} ({self.status})"
+
+
+class Certification(models.Model):
+    """Licenses and Professional Certifications."""
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(unique=True, blank=True, null=True, help_text="Unique string key (e.g., 'aws-solutions-architect')")
+    image = models.ImageField(upload_to='certifications/', blank=True, null=True)
+    image_url = models.URLField(blank=True, null=True, help_text="URL to certificate image")
+    sort_order = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ['sort_order', 'id']
+
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            from django.utils.text import slugify
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+

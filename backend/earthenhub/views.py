@@ -1,14 +1,15 @@
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import Discipline, Project, Experience, Tool, Philosophy, Inquiry
+from .models import Discipline, Project, Experience, Tool, Philosophy, Inquiry, Certification
 from .serializers import (
     DisciplineSerializer,
     ProjectSerializer,
     ExperienceSerializer,
     ToolSerializer,
     PhilosophySerializer,
-    InquirySerializer
+    InquirySerializer,
+    CertificationSerializer
 )
 
 class DisciplineViewSet(viewsets.ReadOnlyModelViewSet):
@@ -71,3 +72,13 @@ class InquiryViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     """
     queryset = Inquiry.objects.all()
     serializer_class = InquirySerializer
+
+
+class CertificationViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allows certifications to be viewed.
+    """
+    queryset = Certification.objects.all()
+    serializer_class = CertificationSerializer
+    lookup_field = 'slug'
+

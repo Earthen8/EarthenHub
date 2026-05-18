@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib import admin
-from .models import Discipline, Project, Experience, Tool, Philosophy, PhilosophyTrait, Inquiry
+from .models import Discipline, Project, Experience, Tool, Philosophy, PhilosophyTrait, Inquiry, Certification
 
 @admin.register(Discipline)
 class DisciplineAdmin(admin.ModelAdmin):
@@ -48,3 +48,12 @@ class InquiryAdmin(admin.ModelAdmin):
     list_editable = ('status',)
     readonly_fields = ('name', 'email', 'message', 'created_at')
     search_fields = ('name', 'email', 'message')
+
+
+@admin.register(Certification)
+class CertificationAdmin(admin.ModelAdmin):
+    list_display = ('title', 'slug', 'sort_order')
+    prepopulated_fields = {'slug': ('title',)}
+    list_editable = ('sort_order',)
+    search_fields = ('title',)
+
