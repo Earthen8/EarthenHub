@@ -20,10 +20,11 @@ class ProjectSerializer(serializers.ModelSerializer):
     techStack = serializers.SerializerMethodField()
     outcome = serializers.SerializerMethodField()
     imageUrl = serializers.SerializerMethodField()
+    link = serializers.URLField(source='external_link', allow_blank=True, allow_null=True, required=False)
     
     class Meta:
         model = Project
-        fields = ['id', 'title', 'slug', 'tag', 'problem', 'solution', 'techStack', 'outcome', 'imageUrl', 'sort_order', 'is_featured']
+        fields = ['id', 'title', 'slug', 'tag', 'problem', 'solution', 'techStack', 'outcome', 'imageUrl', 'sort_order', 'is_featured', 'link']
 
     def get_tag(self, obj):
         return obj.discipline.label if obj.discipline else "General"

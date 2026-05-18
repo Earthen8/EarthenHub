@@ -31,6 +31,7 @@ class Project(models.Model):
     image = models.ImageField(upload_to='projects/', blank=True, null=True)
     sort_order = models.IntegerField(default=0)
     is_featured = models.BooleanField(default=True)
+    external_link = models.URLField(blank=True, null=True, help_text="Link to the external website for this project")
 
     class Meta:
         ordering = ['sort_order', '-id']
