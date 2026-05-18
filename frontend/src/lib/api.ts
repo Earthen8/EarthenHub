@@ -1,9 +1,9 @@
 // Detect if code is running on server or client
 const IS_SERVER = typeof window === 'undefined';
 
-// Server uses Docker DNS, Browser uses Public URL
+// Server uses local or Docker internal URL, Browser uses Public URL
 export const API_BASE_URL = IS_SERVER 
-  ? 'http://backend:8000/api' 
+  ? (process.env.NEXT_SERVER_API_URL || 'http://backend:8000/api') 
   : (process.env.NEXT_PUBLIC_API_URL || 'https://earthen.my.id/api');
 
 /**
