@@ -79,6 +79,9 @@ export const metadata: Metadata = {
   verification: {
     google: 'your-google-verification-code', // Replace this later
   },
+  icons: {
+    icon: '/EKSlogo-favicon.webp',
+  },
 }
 
 export const viewport: Viewport = {
