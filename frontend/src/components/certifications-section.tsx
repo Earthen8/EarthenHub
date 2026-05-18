@@ -198,6 +198,7 @@ export function CertificationsSection({
   const [isMobile, setIsMobile] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
+  const isFirstRender = useRef(true)
 
   // Section reveal
   useEffect(() => {
@@ -229,13 +230,26 @@ export function CertificationsSection({
     return () => { document.body.style.overflow = '' }
   }, [lightboxIndex])
 
-  // Scroll active card into view in track
+  // Scroll active card into view inside track container
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
     const track = trackRef.current
     if (!track) return
+    const container = track.parentElement
+    if (!container) return
     const activeCard = track.querySelector<HTMLElement>('[data-active="true"]')
     if (activeCard) {
-      activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+      const containerWidth = container.clientWidth
+      const cardOffset = activeCard.offsetLeft
+      const cardWidth = activeCard.clientWidth
+      const targetScroll = cardOffset - (containerWidth / 2) + (cardWidth / 2)
+      container.scrollTo({
+        left: targetScroll,
+        behavior: 'smooth',
+      })
     }
   }, [activeIndex])
 
@@ -522,6 +536,7 @@ const SECTION_STYLES = `
 
   /* ── Accordion Track ── */
   .cs-track {
+    position: relative;
     display: flex;
     flex-direction: row;
     align-items: stretch;
