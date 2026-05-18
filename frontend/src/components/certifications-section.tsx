@@ -288,6 +288,7 @@ export function CertificationsSection({
 
       <section
         ref={sectionRef}
+        id="certification"
         className="cs-section"
         aria-label="Licenses and certifications"
       >

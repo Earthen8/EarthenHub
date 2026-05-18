@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Home, Grid3X3, Briefcase, Wrench, Mail, Menu, X } from 'lucide-react'
+import { Home, Grid3X3, Briefcase, Wrench, Mail, Menu, X, GraduationCap } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import EKSlogo from '../../public/eks-logo-white-transparent.png'
 import Image from 'next/image'
@@ -10,6 +10,7 @@ const navItems = [
   { label: 'Home', href: '#hero', icon: Home },
   { label: 'Worlds', href: '#worlds', icon: Grid3X3 },
   { label: 'Journey', href: '#timeline', icon: Briefcase },
+  { label: 'Certification', href: '#certification', icon: GraduationCap },
   { label: 'Tools', href: '#tools', icon: Wrench },
   { label: 'Contact', href: '#contact', icon: Mail },
 ]
