@@ -13,6 +13,7 @@ interface ProjectDetails {
   outcome: string[]
   /** URL supplied by the backend. Leave undefined until the API is ready. */
   imageUrl?: string
+  link?: string
 }
 
 // Data comes from API
@@ -98,9 +99,17 @@ export function FeaturedProjects({ projects: apiProjects }: { projects?: Project
                 <span className="text-xs font-semibold text-accent uppercase tracking-widest">{project.tag}</span>
                 <h3 className="font-serif text-xl font-bold text-foreground mt-0.5">{project.title}</h3>
               </div>
-              <button className="p-2 rounded-lg hover:bg-secondary/50 text-muted-foreground hover:text-foreground transition-colors">
-                <ArrowUpRight className="w-4 h-4" />
-              </button>
+              {project.link && (
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-lg hover:bg-secondary/50 text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label={`Visit ${project.title} website`}
+                >
+                  <ArrowUpRight className="w-4 h-4" />
+                </a>
+              )}
             </div>
 
             <div className="space-y-3">
