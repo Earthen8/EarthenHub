@@ -29,7 +29,10 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files
-.env*
+.env
+.env.local
+.env.*.local
+!.env.example
 
 # vercel
 .vercel
@@ -46,3 +49,13 @@ next-env.d.ts
 **/venv/
 **/ENV/
 **/env/
+
+# OS / IDEs
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
