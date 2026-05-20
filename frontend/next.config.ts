@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
         source: '/api/:path*',
         destination: `${BACKEND_URL}/api/:path*`,
       },
+      {
+        source: '/static/:path*',
+        destination: `${BACKEND_URL}/static/:path*`,
+      },
     ];
   },
   output: 'standalone',
