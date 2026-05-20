@@ -2,8 +2,8 @@
 const IS_SERVER = typeof window === 'undefined';
 
 // Server uses local or Docker internal URL, Browser uses Public URL
-export const API_BASE_URL = IS_SERVER 
-  ? (process.env.NEXT_SERVER_API_URL || 'http://backend:8000/api') 
+export const API_BASE_URL = IS_SERVER
+  ? (process.env.NEXT_SERVER_API_URL || 'http://backend:8000/api')
   : (process.env.NEXT_PUBLIC_API_URL || '/api');
 
 /**
@@ -11,12 +11,12 @@ export const API_BASE_URL = IS_SERVER
  */
 async function fetchAPI<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${API_BASE_URL}${endpoint}`;
-  
+
   // Default to fast revalidation (ISR) for portfolio updates, but allow overrides.
   const defaultOptions: RequestInit = {
     next: { revalidate: 60 }, // Revalidate every 60 seconds
   };
-  
+
   const finalOptions = { ...defaultOptions, ...options };
 
   try {
@@ -41,53 +41,99 @@ async function fetchAPI<T>(endpoint: string, options: RequestInit = {}): Promise
 // Specific Data Fetchers (Server-Side safe)
 // ---------------------------------------------------------------------------
 
-export async function getDisciplines() {
-  try {
-    return await fetchAPI<any[]>('/disciplines');
-  } catch (e) {
-    return [];
-  }
-}
+import { unstable_cache } from 'next/cache';
 
-export async function getFeaturedProjects() {
-  try {
-    return await fetchAPI<any[]>('/projects?featured=true');
-  } catch (e) {
-    return []; 
-  }
-}
+const BACKEND_URL = process.env.BACKEND_URL || 'http://backend:8000';
 
-export async function getExperiences() {
-  try {
-    return await fetchAPI<any[]>('/experiences');
-  } catch (e) {
-    return [];
-  }
-}
+export const getDisciplines = unstable_cache(
+  async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/disciplines/`);
+      if (!response.ok) return [];
+      return response.json();
+    } catch (error) {
+      console.error('Failed to fetch disciplines:', error);
+      return [];
+    }
+  },
+  ['disciplines-cache-key'],
+  { revalidate: 3600 }
+);
 
-export async function getTools() {
-  try {
-    return await fetchAPI<any[]>('/tools');
-  } catch (e) {
-    return []; 
-  }
-}
+export const getFeaturedProjects = unstable_cache(
+  async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/projects/`);
+      if (!response.ok) return [];
+      return response.json();
+    } catch (error) {
+      console.error('Failed to fetch projects:', error);
+      return [];
+    }
+  },
+  ['projects-cache-key'],
+  { revalidate: 3600 }
+);
 
-export async function getPhilosophy() {
-  try {
-    return await fetchAPI<any>('/philosophy');
-  } catch (e) {
-    return null;
-  }
-}
+export const getExperiences = unstable_cache(
+  async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/experiences/`);
+      if (!response.ok) return [];
+      return response.json();
+    } catch (error) {
+      console.error('Failed to fetch projects:', error);
+      return [];
+    }
+  },
+  ['experiences-cache-key'],
+  { revalidate: 3600 }
+);
 
-export async function getCertifications() {
-  try {
-    return await fetchAPI<any[]>('/certifications');
-  } catch (e) {
-    return [];
-  }
-}
+export const getTools = unstable_cache(
+  async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/tools/`);
+      if (!response.ok) return [];
+      return response.json();
+    } catch (error) {
+      console.error('Failed to fetch projects:', error);
+      return [];
+    }
+  },
+  ['tools-cache-key'],
+  { revalidate: 3600 }
+);
+
+export const getPhilosophy = unstable_cache(
+  async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/philosophy/`);
+      if (!response.ok) return [];
+      return response.json();
+    } catch (error) {
+      console.error('Failed to fetch projects:', error);
+      return [];
+    }
+  },
+  ['philosophy-cache-key'],
+  { revalidate: 3600 }
+);
+
+export const getCertifications = unstable_cache(
+  async () => {
+    try {
+      const response = await fetch(`${BACKEND_URL}/api/certifications/`);
+      if (!response.ok) return [];
+      return response.json();
+    } catch (error) {
+      console.error('Failed to fetch projects:', error);
+      return [];
+    }
+  },
+  ['certifications-cache-key'],
+  { revalidate: 3600 }
+);
 
 
 // Client-side POST function

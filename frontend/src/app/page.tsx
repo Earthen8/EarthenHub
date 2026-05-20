@@ -17,8 +17,8 @@ import {
   getCertifications
 } from '@/lib/api'
 
-// Add Incremental Static Regeneration (revalidates cache every hour)
-export const revalidate = 3600;
+// Always render fresh — prevents empty page during Docker build when backend is not yet running
+export const dynamic = 'force-dynamic'
 
 export default async function Home() {
   // Fetch all data in parallel for optimal initial load speed
