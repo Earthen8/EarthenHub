@@ -58,19 +58,22 @@ export function HeroSection() {
     return () => clearTimeout(timer)
   }, [displayedText, isDeleting, taglineIndex])
 
+  // Eliminate Forced Reflows (Reduce Main Thread Activity)
   useEffect(() => {
-    const handleScroll = () => {
-      const aboutSection = document.getElementById('about')
-      if (aboutSection && portraitRef.current) {
-        const aboutRect = aboutSection.getBoundingClientRect()
-        setShouldStickPortrait(aboutRect.top > window.innerHeight / 2)
-      }
-    }
+    const aboutSection = document.getElementById('about');
+    if (!aboutSection || !portraitRef.current) return;
 
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setShouldStickPortrait(!entry.isIntersecting);
+      },
+      { rootMargin: '-50% 0px 0px 0px' }
+    );
 
+    observer.observe(aboutSection);
+
+    return () => observer.disconnect();
+  }, []);
 
   const scrollToWorlds = () => {
     const element = document.getElementById('worlds')
@@ -176,7 +179,7 @@ export function HeroSection() {
             <div className="relative aspect-[4/5] max-w-md mx-auto">
               {/* Background Glow */}
               <div className="absolute -inset-4 bg-gradient-to-br from-accent/20 via-transparent to-accent/10 rounded-3xl blur-2xl" />
-              
+
               {/* Portrait Container */}
               <div className="relative h-full glass rounded-3xl overflow-hidden group">
                 {/* Image with Protection */}
@@ -192,14 +195,14 @@ export function HeroSection() {
                 />
 
                 {/* Interaction Shield & Overlays */}
-                <div 
-                  className="absolute inset-0 opacity-[0.12] mix-blend-overlay z-10" 
-                  style={{ 
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")` 
-                  }} 
+                <div
+                  className="absolute inset-0 opacity-[0.12] mix-blend-overlay z-10"
+                  style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`
+                  }}
                   onContextMenu={(e) => e.preventDefault()}
                 />
-                
+
                 <div className="absolute inset-0 bg-gradient-to-br from-secondary/40 via-transparent to-accent/10 z-20" onContextMenu={(e) => e.preventDefault()} />
 
                 {/* Corner Accents */}

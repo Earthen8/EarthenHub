@@ -105,31 +105,36 @@ export function Cursor() {
       isVisible.current = true
     }
 
-    const handleHoverIn = () => {
-      isHovering.current = true
-    }
+    // Resolve Layout Thrashing in Custom Cursor
+    let cachedRect: DOMRect | null = null;
+
+    const handleHoverIn = (e: Event) => {
+      isHovering.current = true;
+      cachedRect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    };
 
     const handleHoverOut = () => {
-      isHovering.current = false
-      magnetTarget.current = null
-    }
+      isHovering.current = false;
+      magnetTarget.current = null;
+      cachedRect = null;
+    };
 
     const handleMagnetMove = (e: MouseEvent) => {
-      const target = (e.currentTarget as HTMLElement)
-      const rect = target.getBoundingClientRect()
-      const centerX = rect.left + rect.width / 2
-      const centerY = rect.top + rect.height / 2
-      const distX = e.clientX - centerX
-      const distY = e.clientY - centerY
-      const dist = Math.sqrt(distX ** 2 + distY ** 2)
+      if (!cachedRect) return;
+
+      const centerX = cachedRect.left + cachedRect.width / 2;
+      const centerY = cachedRect.top + cachedRect.height / 2;
+      const distX = e.clientX - centerX;
+      const distY = e.clientY - centerY;
+      const dist = Math.sqrt(distX ** 2 + distY ** 2);
 
       if (dist < MAGNET_DISTANCE) {
         magnetTarget.current = {
           x: centerX + distX * MAGNET_STRENGTH,
           y: centerY + distY * MAGNET_STRENGTH,
-        }
+        };
       }
-    }
+    };
 
     // ─── Bind Events ───
 
