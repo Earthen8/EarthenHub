@@ -23,7 +23,10 @@ from django.conf.urls.static import static
 from django.urls import re_path
 from django.views.static import serve
 
+from django.views.generic import RedirectView
+
 urlpatterns = [
+    path('', RedirectView.as_view(url='/api/', permanent=False)),
     path('api/', include([
         path('admin/', admin.site.urls),
         path('', include('earthenhub.urls')),

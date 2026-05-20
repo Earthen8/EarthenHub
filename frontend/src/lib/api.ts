@@ -4,7 +4,7 @@ const IS_SERVER = typeof window === 'undefined';
 // Server uses local or Docker internal URL, Browser uses Public URL
 export const API_BASE_URL = IS_SERVER 
   ? (process.env.NEXT_SERVER_API_URL || 'http://backend:8000/api') 
-  : (process.env.NEXT_PUBLIC_API_URL || 'https://earthen.my.id/api');
+  : (process.env.NEXT_PUBLIC_API_URL || '/api');
 
 /**
  * Universal fetcher with error handling and Next.js ISR/cache support.
@@ -43,7 +43,7 @@ async function fetchAPI<T>(endpoint: string, options: RequestInit = {}): Promise
 
 export async function getDisciplines() {
   try {
-    return await fetchAPI<any[]>('/disciplines/');
+    return await fetchAPI<any[]>('/disciplines');
   } catch (e) {
     return [];
   }
@@ -51,7 +51,7 @@ export async function getDisciplines() {
 
 export async function getFeaturedProjects() {
   try {
-    return await fetchAPI<any[]>('/projects/?featured=true');
+    return await fetchAPI<any[]>('/projects?featured=true');
   } catch (e) {
     return []; 
   }
@@ -59,7 +59,7 @@ export async function getFeaturedProjects() {
 
 export async function getExperiences() {
   try {
-    return await fetchAPI<any[]>('/experiences/');
+    return await fetchAPI<any[]>('/experiences');
   } catch (e) {
     return [];
   }
@@ -67,7 +67,7 @@ export async function getExperiences() {
 
 export async function getTools() {
   try {
-    return await fetchAPI<any[]>('/tools/');
+    return await fetchAPI<any[]>('/tools');
   } catch (e) {
     return []; 
   }
@@ -75,7 +75,7 @@ export async function getTools() {
 
 export async function getPhilosophy() {
   try {
-    return await fetchAPI<any>('/philosophy/');
+    return await fetchAPI<any>('/philosophy');
   } catch (e) {
     return null;
   }
@@ -83,7 +83,7 @@ export async function getPhilosophy() {
 
 export async function getCertifications() {
   try {
-    return await fetchAPI<any[]>('/certifications/');
+    return await fetchAPI<any[]>('/certifications');
   } catch (e) {
     return [];
   }
@@ -92,7 +92,7 @@ export async function getCertifications() {
 
 // Client-side POST function
 export async function submitInquiry(data: { name: string; email: string; message: string }) {
-  const response = await fetch(`${API_BASE_URL}/inquiries/`, {
+  const response = await fetch(`${API_BASE_URL}/inquiries`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

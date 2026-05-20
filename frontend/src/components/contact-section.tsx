@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { submitInquiry } from '@/lib/api'
+import { sendEmail } from '@/app/actions'
 
 const socialLinks = [
   {
@@ -57,11 +58,19 @@ export function ContactSection() {
     formData.append('honeypot', formState.honeypot)
 
     try {
+      // Save submission in the backend database
       await submitInquiry({
         name: formState.name,
         email: formState.email,
         message: formState.message,
       })
+
+      // Send email notification via Resend
+      const emailResult = await sendEmail(formData)
+      if (!emailResult.success) {
+        throw new Error(emailResult.error || 'Failed to send email notification.')
+      }
+
       setIsSubmitted(true)
       setFormState({ name: '', email: '', message: '', honeypot: '' })
     } catch (error: any) {

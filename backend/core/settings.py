@@ -32,6 +32,14 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-03i2d%s7kl+$k+2^579c74dxph
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
+else:
+    CORS_ALLOWED_ORIGINS = [
+        "https://earthen.my.id",
+        "https://www.earthen.my.id",
+    ]
+
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'earthen.my.id,backend,localhost,127.0.0.1,100.107.249.94,100.74.191.109').split(',')
 
 
@@ -136,14 +144,16 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CORS_ALLOWED_ORIGINS = [
-    "https://earthen.my.id",
-    "https://www.earthen.my.id",
-]
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://earthen.my.id",
-]
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ]
+else:
+    CSRF_TRUSTED_ORIGINS = [
+        "https://earthen.my.id",
+    ]
 
 CORS_ALLOW_CREDENTIALS = True
 
