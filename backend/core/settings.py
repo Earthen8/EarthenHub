@@ -40,7 +40,7 @@ else:
         "https://www.earthen.my.id",
     ]
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'earthen.my.id,admin.earthen.my.id,backend,localhost,127.0.0.1,100.107.249.94,100.74.191.109').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'earthen.my.id,backend,localhost,127.0.0.1,100.107.249.94,100.74.191.109').split(',')
 
 
 # Application definition
@@ -153,7 +153,6 @@ if DEBUG:
 else:
     CSRF_TRUSTED_ORIGINS = [
         "https://earthen.my.id",
-        "https://admin.earthen.my.id",
     ]
 
 CORS_ALLOW_CREDENTIALS = True
