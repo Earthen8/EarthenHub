@@ -17,6 +17,9 @@ import {
   getCertifications
 } from '@/lib/api'
 
+// Always render fresh — prevents empty page during Docker build when backend is not yet running
+export const dynamic = 'force-dynamic'
+
 export default async function Home() {
   // Fetch all data in parallel for optimal initial load speed
   const [
