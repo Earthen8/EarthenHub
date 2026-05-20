@@ -8,16 +8,16 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: '/media/:path*',
-        destination: `${BACKEND_URL}/media/:path*`,
+        source: '/media:path(.*)',
+        destination: `${BACKEND_URL}/media:path`,
       },
       {
-        source: '/api/:path*',
-        destination: `${BACKEND_URL}/api/:path*`,
+        source: '/api:path(.*)',
+        destination: `${BACKEND_URL}/api:path`,
       },
       {
-        source: '/static/:path*',
-        destination: `${BACKEND_URL}/static/:path*`,
+        source: '/static:path(.*)',
+        destination: `${BACKEND_URL}/static:path`,
       },
     ];
   },
