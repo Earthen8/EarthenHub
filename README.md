@@ -1,51 +1,132 @@
-# EarthenHub - Styling System
+# EarthenHub
 
-This project uses **Tailwind CSS v4** with a centralized design token system.
+Welcome to **EarthenHub**, the repository for my personal website and professional portfolio. 
 
-## Design Architecture
+This project is a monorepo consisting of a **Django REST Framework** backend API and a **Next.js 15** frontend web app. It is designed to run seamlessly in local development and is fully Dockerized for production deployment (e.g., using a Cloudflare Tunnel).
 
-The styling system is split into three layers for maximum flexibility and type safety:
+---
 
-1.  **`src/app/globals.css`**: The source of truth for Tailwind v4. Defines CSS variables within the `@theme` block.
-2.  **`src/constants/tokens.ts`**: Contains the raw hex/value definitions for use in scenarios where CSS variables aren't accessible (e.g., external libraries).
-3.  **`src/constants/design-system.ts`**: Maps CSS variables to a TypeScript object (`DESIGN_TOKENS`) for type-safe usage in React components.
+## Project Structure
 
-## Color Palette
-
-| Token | Variable | Hex Value | Description |
-| :--- | :--- | :--- | :--- |
-| `primary` | `--color-primary` | `#FFDB70` | Primary brand color (Yellow) |
-| `secondary` | `--color-secondary` | `#1E1E1F` | Secondary background/accent |
-| `tertiary` | `--color-tertiary` | `#D6D6D6` | Text and subtle accents |
-| `neutral` | `--color-neutral` | `#121212` | Main background color |
-| `buttonInverted` | `--color-button-inverted` | `#E1E1E1` | Inverted button state |
-
-## Typography
-
-### Font Families
-- **Main**: `Manrope`, sans-serif (`--font-manrope`)
-
-### Text Scales
-Mapped to Tailwind utility classes (e.g., `text-headline`):
-
-| Scale | Value | Variable |
-| :--- | :--- | :--- |
-| `headline` | `2rem` | `--text-headline` |
-| `body` | `1rem` | `--text-body` |
-| `label` | `0.875rem` | `--text-label` |
-
-## Usage
-
-### In Tailwind (CSS/Classes)
-Tailwind v4 automatically detects variables in the `@theme` block:
-```html
-<h1 class="text-headline text-primary">Hello World</h1>
+```text
+earthenhub/
+├── backend/            # Django REST API (Content Management & Inquiries)
+├── frontend/           # Next.js App Router (UI & Resend email client)
+├── docker-compose.yml  # Multi-container orchestrator for production
+└── README.md           # Project-level overview (this file)
 ```
 
-### In TypeScript/React
-Use the `DESIGN_TOKENS` constant for dynamic styling:
-```tsx
-import { DESIGN_TOKENS } from '@/constants/design-system';
+---
 
-const style = { color: DESIGN_TOKENS.colors.primary };
-```
+## Tech Stack
+
+* **Frontend**: Next.js 15 (App Router), React, TypeScript, Tailwind CSS v4, Lucide Icons.
+* **Backend**: Django 5.2, Django REST Framework (DRF), SQLite (default local database).
+* **Emails**: Resend API (integrated via Next.js Server Actions).
+* **Containerization**: Docker & Docker Compose.
+
+---
+
+## Local Development Setup
+
+To run this project locally, you will need to start both the backend API and the frontend development server.
+
+### 1. Backend Setup (Django)
+
+Navigate to the `backend` directory and follow these steps:
+
+1. **Create and activate a virtual environment**:
+   ```bash
+   cd backend
+   python -m venv venv
+   # On Windows:
+   venv\Scripts\activate
+   # On macOS/Linux:
+   source venv/bin/activate
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Configure environment variables**:
+   Create a `.env` file in the `backend/` directory:
+   ```env
+   DEBUG=True
+   SECRET_KEY=django-insecure-dev-key-for-local-testing
+   ```
+
+4. **Run migrations**:
+   ```bash
+   python manage.py migrate
+   ```
+
+5. **Create a superuser** (to access the admin panel):
+   ```bash
+   python manage.py createsuperuser
+   ```
+
+6. **Start the backend development server**:
+   ```bash
+   python manage.py runserver
+   ```
+   The backend API will run at **`http://127.0.0.1:8000/`**.
+
+---
+
+### 2. Frontend Setup (Next.js)
+
+Navigate to the `frontend` directory and follow these steps:
+
+1. **Install dependencies**:
+   ```bash
+   cd frontend
+   npm install
+   ```
+
+2. **Configure environment variables**:
+   Create a `.env.local` file in the `frontend/` directory:
+   ```env
+   # Browser/Client endpoint (uses Next.js rewrite proxy)
+   NEXT_PUBLIC_API_URL=/api
+   
+   # Server-side API endpoint (calls Django directly)
+   NEXT_SERVER_API_URL=http://127.0.0.1:8000/api
+   
+   # Resend API Key for sending email inquiries
+   RESEND_API_KEY=re_your_api_key
+   ```
+
+3. **Start the development server**:
+   ```bash
+   npm run dev
+   ```
+   The frontend will run at **`http://localhost:3000/`**.
+
+---
+
+## Production / Docker Deployment
+
+This codebase is configured to be exported as a standalone Docker container server and published using a Cloudflare Tunnel.
+
+### Docker Compose
+You can build and run both the frontend and backend in production-ready containerized mode:
+
+1. Add your environment variables in your host system (e.g. `RESEND_API_KEY`).
+2. Run Docker Compose:
+   ```bash
+   docker-compose up --build
+   ```
+
+* The **backend** container runs internally on port `8000`.
+* The **frontend** container runs Next.js in `standalone` mode, serving the site on port `3000`.
+* Next.js automatically proxies `/api` and `/media` requests to the backend container over the internal Docker network using the container name (`http://backend:8000`).
+
+---
+
+## Documentation
+
+For component-level instructions and developer guides, please see:
+* [Backend Documentation](file:///c:/Users/Earthen/dev/personal/earthenhub/backend/README.md)
+* [Frontend Documentation](file:///c:/Users/Earthen/dev/personal/earthenhub/frontend/README.md)
