@@ -21,6 +21,16 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'earthen.my.id',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  },
   output: 'standalone',
   skipTrailingSlashRedirect: true,
 };
