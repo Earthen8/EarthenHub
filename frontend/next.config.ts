@@ -3,21 +3,24 @@ import type { NextConfig } from "next";
 const BACKEND_URL = process.env.BACKEND_URL || 'http://backend:8000';
 
 const nextConfig: NextConfig = {
-  /* config options here */
   allowedDevOrigins: ['100.107.249.94'],
   async rewrites() {
     return [
       {
-        source: '/media:path(.*)',
-        destination: `${BACKEND_URL}/media:path`,
+        source: '/admin/:path*',
+        destination: `${BACKEND_URL}/admin/:path*`,
       },
       {
-        source: '/api:path(.*)',
-        destination: `${BACKEND_URL}/api:path`,
+        source: '/media/:path*',
+        destination: `${BACKEND_URL}/media/:path*`,
       },
       {
-        source: '/static:path(.*)',
-        destination: `${BACKEND_URL}/static:path`,
+        source: '/api/:path*',
+        destination: `${BACKEND_URL}/api/:path*`,
+      },
+      {
+        source: '/static/:path*',
+        destination: `${BACKEND_URL}/static/:path*`,
       },
     ];
   },
