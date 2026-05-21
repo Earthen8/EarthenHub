@@ -13,7 +13,7 @@ class ImageURLSerializationTest(TestCase):
             description="Design work"
         )
         
-    def test_project_serializer_prioritizes_image_url(self):
+    def test_project_serializer_image(self):
         small_gif = (
             b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x00\x00\x00\x21\xf9\x04'
             b'\x01\x0a\x00\x01\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02'
@@ -25,23 +25,22 @@ class ImageURLSerializationTest(TestCase):
             title="Test Project",
             slug="test-project",
             discipline=self.discipline,
-            image=image_file,
-            image_url="https://cloudflare-r2.com/test_image.gif"
+            image=image_file
         )
         
         serializer = ProjectSerializer(project)
-        self.assertEqual(serializer.data["imageUrl"], "https://cloudflare-r2.com/test_image.gif")
+        self.assertIn("test_image", serializer.data["imageUrl"])
 
-        project_only_image = Project.objects.create(
-            title="Test Project 2",
-            slug="test-project-2",
-            discipline=self.discipline,
-            image=image_file
+    def test_project_serializer_fallback(self):
+        project = Project.objects.create(
+            title="Test Project No Image",
+            slug="test-project-no-image",
+            discipline=self.discipline
         )
-        serializer_only_image = ProjectSerializer(project_only_image)
-        self.assertIn("test_image", serializer_only_image.data["imageUrl"])
+        serializer = ProjectSerializer(project)
+        self.assertEqual(serializer.data["imageUrl"], "https://placehold.co/600x400/1a1a1a/ffffff?text=Project+Preview")
 
-    def test_certification_serializer_prioritizes_image_url(self):
+    def test_certification_serializer_image(self):
         small_gif = (
             b'\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x00\x00\x00\x21\xf9\x04'
             b'\x01\x0a\x00\x01\x00\x2c\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02'
@@ -52,8 +51,15 @@ class ImageURLSerializationTest(TestCase):
         cert = Certification.objects.create(
             title="Test Cert",
             slug="test-cert",
-            image=image_file,
-            image_url="https://cloudflare-r2.com/cert.gif"
+            image=image_file
         )
         serializer = CertificationSerializer(cert)
-        self.assertEqual(serializer.data["imageUrl"], "https://cloudflare-r2.com/cert.gif")
+        self.assertIn("cert", serializer.data["imageUrl"])
+
+    def test_certification_serializer_fallback(self):
+        cert = Certification.objects.create(
+            title="Test Cert No Image",
+            slug="test-cert-no-image"
+        )
+        serializer = CertificationSerializer(cert)
+        self.assertIsNone(serializer.data["imageUrl"])

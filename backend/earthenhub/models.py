@@ -27,7 +27,6 @@ class Project(models.Model):
     approach = models.TextField()
     outcome_metrics = models.JSONField(default=list, help_text="List of strings, e.g., ['99.9% uptime', '300ms avg response']")
     technology_tags = models.JSONField(default=list, help_text="List of strings representing tech stack")
-    image_url = models.URLField(blank=True, null=True, help_text="URL to the project image")
     image = models.ImageField(upload_to='projects/', blank=True, null=True)
     sort_order = models.IntegerField(default=0)
     is_featured = models.BooleanField(default=True)
@@ -158,7 +157,6 @@ class Certification(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True, null=True, help_text="Unique string key (e.g., 'aws-solutions-architect')")
     image = models.ImageField(upload_to='certifications/', blank=True, null=True)
-    image_url = models.URLField(blank=True, null=True, help_text="URL to certificate image")
     sort_order = models.IntegerField(default=0)
 
     class Meta:

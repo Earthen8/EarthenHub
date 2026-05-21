@@ -36,8 +36,6 @@ class ProjectSerializer(serializers.ModelSerializer):
         return obj.outcome_metrics if isinstance(obj.outcome_metrics, list) else []
 
     def get_imageUrl(self, obj):
-        if obj.image_url:
-            return obj.image_url
         if obj.image:
             return obj.image.url
         # Fallback to a safe placeholder if no image exists
@@ -96,8 +94,6 @@ class CertificationSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'imageUrl', 'sort_order']
 
     def get_imageUrl(self, obj):
-        if obj.image_url:
-            return obj.image_url
         if obj.image:
             return obj.image.url
         return None
