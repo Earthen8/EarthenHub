@@ -55,7 +55,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'earthenhub',
-    'storages',
 ]
 
 MIDDLEWARE = [
@@ -141,8 +140,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-MEDIA_ROOT = BASE_DIR / 'media'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
@@ -164,8 +161,6 @@ CORS_ALLOW_CREDENTIALS = True
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'earthenhub.exceptions.global_exception_handler',
 }
-
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
