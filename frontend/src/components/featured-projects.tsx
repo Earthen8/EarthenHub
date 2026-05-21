@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ArrowUpRight, ImageIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -23,14 +23,32 @@ interface ProjectDetails {
    Falls back to a branded placeholder until the API is wired up.
 ──────────────────────────────────────────────────────────────── */
 function ProjectImage({ imageUrl, title }: { imageUrl?: string; title: string }) {
-  if (imageUrl) {
+  const [error, setError] = useState(false)
+
+  useEffect(() => {
+    setError(false)
+  }, [imageUrl])
+
+  if (imageUrl && !error) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
         src={imageUrl}
         alt={title}
         className="w-full h-full object-cover"
+        onError={() => setError(true)}
       />
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center gap-3 select-none p-4 text-center">
+        <div className="p-4 rounded-2xl bg-destructive/10 border border-destructive/20 text-destructive">
+          <ImageIcon className="w-8 h-8" />
+        </div>
+        <p className="text-xs text-destructive/80 font-semibold">Failed to load preview</p>
+      </div>
     )
   }
 

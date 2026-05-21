@@ -52,6 +52,62 @@ const CARD_PALETTES = [
   { bg: '#1a0a14', accent: '#f472b6', text: '#fce7f3' },
 ]
 
+// ─── Fallback Components ──────────────────────────────────────────────────────
+
+function CardBackground({ src, alt }: { src: string; alt: string }) {
+  const [error, setError] = useState(false)
+
+  useEffect(() => {
+    setError(false)
+  }, [src])
+
+  if (error) {
+    return (
+      <div className="absolute inset-0 flex flex-col items-center justify-center p-3 text-center bg-destructive/10 border border-destructive/20 text-destructive z-10 select-none">
+        <Award className="w-6 h-6 opacity-60 mb-1" />
+        <span className="text-[10px] font-semibold">Image Load Error</span>
+      </div>
+    )
+  }
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt={alt}
+      className="cs-card__bg-img"
+      aria-hidden="true"
+      onError={() => setError(true)}
+    />
+  )
+}
+
+function ThumbnailImage({ src, alt }: { src: string; alt: string }) {
+  const [error, setError] = useState(false)
+
+  useEffect(() => {
+    setError(false)
+  }, [src])
+
+  if (error) {
+    return (
+      <span className="lb-thumb__num text-destructive font-bold border border-destructive/30 rounded-md w-full h-full flex items-center justify-center text-xs bg-destructive/10" title="Image failed to load">
+        ⚠️
+      </span>
+    )
+  }
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt={alt}
+      className="lb-thumb__img"
+      onError={() => setError(true)}
+    />
+  )
+}
+
 // ─── A4 Lightbox ──────────────────────────────────────────────────────────────
 
 interface LightboxProps {
@@ -65,6 +121,11 @@ function A4Lightbox({ certifications, activeIndex, onClose, onNavigate }: Lightb
   const thumbsRef = useRef<HTMLDivElement>(null)
   const cert = certifications[activeIndex]
   const palette = CARD_PALETTES[activeIndex % CARD_PALETTES.length]
+  const [imageError, setImageError] = useState(false)
+
+  useEffect(() => {
+    setImageError(false)
+  }, [activeIndex])
 
   // Scroll active thumbnail into view
   useEffect(() => {
@@ -107,15 +168,21 @@ function A4Lightbox({ certifications, activeIndex, onClose, onNavigate }: Lightb
 
           {/* A4 paper — always horizontal (landscape) */}
           <div className="lb-a4" style={{ borderColor: palette.accent + '55' }}>
-            {cert.imageUrl ? (
+            {cert.imageUrl && !imageError ? (
               <img
                 src={cert.imageUrl}
                 alt={`${cert.title} certificate`}
                 className="lb-a4__img"
+                onError={() => setImageError(true)}
               />
             ) : (
               <div className="lb-a4__placeholder" style={{ '--accent': palette.accent } as React.CSSProperties}>
                 <div className="lb-a4__placeholder-inner">
+                  {imageError && (
+                    <span className="text-[10px] font-semibold text-destructive uppercase tracking-widest absolute top-4 right-4 z-10">
+                      Failed to load preview
+                    </span>
+                  )}
                   <div className="lb-a4__deco-corner lb-a4__deco-corner--tl" />
                   <div className="lb-a4__deco-corner lb-a4__deco-corner--tr" />
                   <div className="lb-a4__deco-corner lb-a4__deco-corner--bl" />
@@ -170,7 +237,7 @@ function A4Lightbox({ certifications, activeIndex, onClose, onNavigate }: Lightb
                 aria-label={c.title}
               >
                 {c.imageUrl ? (
-                  <img src={c.imageUrl} alt={c.title} className="lb-thumb__img" />
+                  <ThumbnailImage src={c.imageUrl} alt={c.title} />
                 ) : (
                   <span className="lb-thumb__num">{String(i + 1).padStart(2, '0')}</span>
                 )}
@@ -376,11 +443,9 @@ export function CertificationsSection({
                   >
                     {/* Full-bleed background image */}
                     {cert.imageUrl && (
-                      <img
+                      <CardBackground
                         src={cert.imageUrl}
                         alt={`${cert.title} certificate`}
-                        className="cs-card__bg-img"
-                        aria-hidden="true"
                       />
                     )}
 
