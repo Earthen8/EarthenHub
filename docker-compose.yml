@@ -22,7 +22,7 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - SECRET_KEY=${SECRET_KEY}
-      - DEBUG=False
+      - DEBUG=${DEBUG:-False}
       - ALLOWED_HOSTS=earthen.my.id,backend,localhost
       - USE_CLOUDFLARE_R2=True
       - R2_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID}
