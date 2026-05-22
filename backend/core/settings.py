@@ -169,6 +169,7 @@ if USE_CLOUDFLARE_R2 and not TESTING:
     }
     
     MEDIA_URL = 'https://earthen.my.id/media/'
+    WHITENOISE_MANIFEST_STRICT = False
 else:
     STORAGES = {
         "default": {
@@ -181,6 +182,7 @@ else:
 
     MEDIA_URL = '/media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    WHITENOISE_MANIFEST_STRICT = False
 
 
 
