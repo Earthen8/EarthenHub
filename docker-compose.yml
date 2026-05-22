@@ -6,7 +6,7 @@ services:
     environment:
       - POSTGRES_DB=earthenhub
       - POSTGRES_USER=earthen
-      - POSTGRES_PASSWORD=your_secure_password
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     restart: always
 
   backend:
@@ -20,8 +20,8 @@ services:
       - static_volume:/app/staticfiles
       - media_volume:/app/media
     environment:
-      - DATABASE_URL=postgres://earthen:your_secure_password@db:5432/earthenhub
-      - SECRET_KEY=your_production_secret_key
+      - DATABASE_URL=${DATABASE_URL}
+      - SECRET_KEY=${SECRET_KEY}
       - DEBUG=False
       - ALLOWED_HOSTS=earthen.my.id,backend,localhost
       - USE_CLOUDFLARE_R2=True
