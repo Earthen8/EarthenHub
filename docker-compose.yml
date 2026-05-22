@@ -47,6 +47,8 @@ services:
       - R2_PUBLIC_URL=${R2_PUBLIC_URL}
     depends_on:
       - backend
+    extra_hosts:
+      - "pub-beccaee387184253a988fbb6761b9923.r2.dev:172.67.202.164"
 
 volumes:
   postgres_data:
