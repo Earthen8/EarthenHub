@@ -18,29 +18,39 @@ It is structured to fetch data from the Django API and submit inquiries, while c
 
 ## Configuration & Environment Variables
 
-Create a `.env.local` file in the root of the `frontend/` directory:
+Create a `.env.local` file in the root of the `frontend/` directory (see `frontend/.env.example` for details):
 
 ```env
-# Relative API route for browser requests (uses Next.js rewrites)
-NEXT_PUBLIC_API_URL=/api
+# Next.js Server Settings
+HOSTNAME=0.0.0.0
+BACKEND_URL=http://backend:8000
 
 # Direct backend API URL for server-side fetches (Django container/server)
 NEXT_SERVER_API_URL=http://127.0.0.1:8000/api
 
 # Resend Service API Key for contact inquiries
 RESEND_API_KEY=re_your_api_key_here
+
+# Cloudflare R2 Public Bucket URL (for reverse proxying media files)
+R2_PUBLIC_URL=https://pub-xxxxxx.r2.dev
 ```
 
 ---
 
 ## API Proxy Routing
 
-To prevent CORS issues and avoid hardcoding absolute paths, Next.js handles proxying `/api` and `/media` requests internally via `next.config.ts`.
+To prevent CORS issues, avoid hardcoding absolute paths, and mask the Cloudflare R2 bucket URLs, Next.js handles proxy routing internally via `next.config.ts`.
 
-* **Development Rewrite**: Proxies `/api/*` and `/media/*` requests to your local Python server (`http://127.0.0.1:8000`).
-* **Docker/Production Rewrite**: Proxies to the backend container (`http://backend:8000`) inside the Docker virtual network.
+### 1. API Requests (`/api/*`)
+* **Development Rewrite**: Proxies `/api/*` requests to your local Django server (`http://127.0.0.1:8000/api/*`).
+* **Docker/Production Rewrite**: Proxies to the backend container (`http://backend:8000/api/*`) inside the Docker virtual network.
+* All client-side API requests are made relative to `/api` (configured automatically in `src/lib/api.ts`).
 
-All client-side API requests should be made relative to `/api` (configured automatically in `src/lib/api.ts`).
+### 2. Media Requests (`/media/*`)
+* **Development Rewrite**: Proxies `/media/*` requests to the local Django server (`http://127.0.0.1:8000/media/*`) to serve locally stored images.
+* **Docker/Production Rewrite**: Proxies directly to the public Cloudflare R2 bucket URL (`R2_PUBLIC_URL`) server-side.
+* By proxying `/media` requests server-side, the client browser only ever sees the main domain (e.g. `https://earthen.my.id/media/projects/screenshot.png`), hiding the backend bucket domain (`*.r2.dev`) and preventing cross-origin asset resource sharing (CORS) issues for images.
+
 
 ---
 
