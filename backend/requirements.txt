@@ -14,3 +14,6 @@ Pillow
 
 # Database
 psycopg2-binary
+
+# Cloudflare R2 / S3 Storage Support
+django-storages[boto3]>=1.14
